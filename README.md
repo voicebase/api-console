@@ -53,5 +53,5 @@ To run only a portion of the tests, you can use
     $ grunt spec:integration
     $ grunt scenario
 
-The scenario tests use angular's [protractor](https://github.com/angular/protractor) framework, and run via selenium in firefox. Selenium is automatically downloaded, but you'll need firefox to be installed.
+The scenario tests use angular's [protractor](https://github.com/angular/protractor) framework and run via selenium in firefox. Selenium is automatically downloaded, but you'll need firefox to be installed.
 
