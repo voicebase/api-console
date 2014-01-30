@@ -31,6 +31,7 @@ module.exports = function (grunt) {
   };
 
   grunt.initConfig({
+    ramlFileUrl: grunt.option('ramlFileUrl'),
     ngtemplates: {
       dist: {
         options: {
@@ -118,7 +119,7 @@ module.exports = function (grunt) {
     },
     open: {
       server: {
-        url: 'http://localhost:<%= connect.options.port %>'
+        url: 'http://localhost:<%= connect.options.port %><%= ramlFileUrl ? "?raml=" + ramlFileUrl : ""%>'
       }
     },
     clean: {
