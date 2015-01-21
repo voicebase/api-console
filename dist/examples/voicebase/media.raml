@@ -1,7 +1,7 @@
 # /media:
   type:
     media.postable:
-  displayName: Media collection 
+  displayName: Media collection
   description: Collection of all media and associated analytical results.
   securedBy: [ OAuth2.0 ]
   get:
@@ -27,11 +27,11 @@
           media:
             - type: file
               required: true
-              description: Media file attached to the request. 
+              description: Media file attached to the request.
             - type: string
               required: true
               description: URL where media file can be downloaded.
-  
+
   /{mediaId}:
     type:
       media.postable:
@@ -58,16 +58,16 @@
 
     # Machine, human, and user-edited transcripts.
     /transcripts:
-      type: 
+      type:
         media.result:
           item.name: transcripts
           item.human.name: set of transcripts
-          get.collection.example: !include media.transcripts.get.json
-          get.item.example: !include media.transcripts.item.get.json
+          get.collection.example: !include media/media.transcripts.get.json
+          get.item.example: !include media/media.transcripts.item.get.json
 
     # Keywords extracted from a transcript and (possibly) curated.
     /keywords:
-      type: 
+      type:
         media.result:
           item.name: keywords
           item.human.name: set of keywords
@@ -76,7 +76,7 @@
 
     # Topics gathered from keywords and (possibly) curated.
     /topics:
-      type: 
+      type:
         media.result:
           item.name: topics
           item.human.name: set of topics
@@ -84,8 +84,8 @@
           get.item.example: !include media/media.topics.item.get.json
 
     # Utterances recognized from transcripts and derived data.
-    /utterances: 
-      type: 
+    /utterances:
+      type:
         media.result:
           item.name: utterances
           item.human.name: set of utterances
@@ -93,8 +93,8 @@
           get.item.example: !include media/media.utterances.item.get.json
 
     # Predictions made from transcripts and derived data.
-    /predictions: 
-      type: 
+    /predictions:
+      type:
         media.result:
           item.name: predictions
           item.human.name: set of predictions
