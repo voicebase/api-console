@@ -1,0 +1,36 @@
+{
+  "template" : {
+    "name" : "default",
+    "default" : true,
+    "ingest" : {
+      "priority" : "normal"
+    },
+    "transcripts" : {
+      "engine" : "premium"
+      "human" : { "enabled" : false },
+      "vocabularies" : [ "investor-relations" ]
+    },
+    "keywords" : {
+      "groups" : [ "mobile-phone" ]
+    },
+    "topics" : {
+      "lists" : [ ]
+    },
+    "entities" : {
+      "sets" : [ ]
+    },
+    "utterances" : {
+      "detections" : [ ],
+      "redactions" : [ ]
+    },
+    "predictions" : {
+      "models" : [ "likely-to-cancel" ]
+    },
+    "publish" : {
+      "shares" : "*",
+      "callbacks" : [
+        "https://api.example.org/callbacks/{mediaId}"
+      ]
+    }
+  }
+}

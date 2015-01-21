@@ -1,0 +1,15 @@
+# - Basic:
+  description: |
+      VoiceBase Basic support for authenticating users and OAuth token requests.
+  type: Basic Authentication
+  describedBy:
+    headers:
+      Authorization:
+          description: |
+           Used to send a Base64-encoded user:password, as defined by RFC2617.
+          type: string
+    
+    responses:
+      403:
+          description: |
+            Missing or invalid credentials, or no access to system or operation.

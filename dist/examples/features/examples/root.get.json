@@ -1,0 +1,11 @@
+{ 
+  "_links" : {
+    "self" : { "href" : "/v2-beta/" },
+    "facets" : [
+      { "href" : "/v2-beta/media/", "title" : "Media collection and operations" },
+      { "href" : "/v2-beta/templates/", "title" : "Templates for media processing" },
+      { "href" : "/v2-beta/definitions/", "title" : "Definitions and reference data" },
+      { "href" : "/v2-beta/access/", "title" : "Access and user management" }
+    ]
+  }
+}

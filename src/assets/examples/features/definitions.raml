@@ -1,0 +1,45 @@
+# /definitions:
+  displayName: Definitions and reference data.
+  description: Allows definition of complex behaviors or reusable data sets.
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/definitions.get.json
+  
+  /transcripts:
+    displayName: Definitions for Transcripts
+    get:
+      description: Get definition types for transcripts.
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/definitions.transcripts.get.json
+              
+    /vocabularies: !include definitions/transcripts-vocabularies.raml
+
+  /keywords:
+    displayName: Definitions for Keywords
+    get:
+      description: Get definition types for keywords.
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/definitions.keywords.get.json
+              
+    /groups: !include definitions/keywords-groups.raml
+
+  /predictions:
+    displayName: Definitions for Predictions
+    get:
+      description: Get definition types for predictions.
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/definitions.predictions.get.json
+              
+    /models: !include definitions/predictions-models.raml

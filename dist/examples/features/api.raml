@@ -1,0 +1,47 @@
+#%RAML 0.8
+---
+title: Voicebase /v2-beta REST API
+version: v2-beta
+baseUri: https://{apis}.voicebase.com/{version}
+baseUriParameters:
+  apis:
+    default: apis
+
+protocols: [ HTTPS ]
+mediaType: application/json
+securitySchemes: 
+  - OAuth2.0: !include security/oauth.raml
+  - Basic: !include security/basic.raml
+securedBy: [ OAuth2.0 ]
+documentation: # !include documentation/overview.raml
+  - title: Getting Started
+    content: !include documentation/Getting_Started.md
+resourceTypes:
+  - media.result: !include media.result.raml
+  - media.postable: !include media.postable.raml
+      
+/:
+  displayName: VoiceBase v2 APIs
+  description: APIs for voice transcription and analytics.
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/root.get.json
+
+/media: !include media.raml # Media files and related analytical results.
+
+/definitions: !include definitions.raml # Definitions and reference data.
+
+/templates: !include templates.raml # Templates for media processing.
+
+/access: !include access.raml # Access and user management.
+
+
+
+
+
+
+
+

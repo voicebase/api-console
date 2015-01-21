@@ -1,0 +1,27 @@
+{
+  "_links" : {
+    "self" : { "href" : "/definitions/transcripts/vocabularies/investor-relations" },
+    "revision" : { "href" : "/definitions/transcripts/vocabularies/defcc5c0-e2fc-442b-95cb-28f6a83e8337" }
+  },
+  "vocabulary" : {
+    "name" : "investor-relations",
+    "revision" : "defcc5c0-e2fc-442b-95cb-28f6a83e8337",
+    "media" : [
+      "f373d388-8e97-4d9c-84a8-697b2495eb7b",
+      "58c0624d-2da7-48ae-85e7-9eb8b42d6891",
+      "af07ce4c-597f-4e6e-be6f-4b236a29145f",
+      "41a089cf-9043-4c23-88f0-6e746ea6094e",
+      "9a785e74-f963-48e0-9a54-41a8915bfd41",
+      "8b79a053-1ccf-418f-a9d2-3c6aaaeb63c0",
+      "62f1b5d4-1e0c-412d-bd53-282963da0d08",
+      "8d1f11f4-54de-4243-a40b-f18e81e6b0a7",
+      "e09ea7e6-c6a2-476f-8e9e-478255d649a3",
+      "937052f1-855b-404c-9124-3f56dd75b428"
+    ],
+    "terms" : [
+      "GAAP",
+      "earnings per share",
+      "EBITDA"
+    ]
+  }
+}

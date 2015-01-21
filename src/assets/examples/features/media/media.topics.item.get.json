@@ -1,0 +1,31 @@
+{ 
+  "_links" : {
+    "self" : { "href" : "/v2-beta/media/{mediaId}/topics/latest" },
+    "revision" : { "href" : "/v2-beta/media/{mediaId}/topics/cc7bd8d1-bb76-47c9-bf52-54acd43aea57c" },
+    "provenance" : [
+      { "href" : "/v2-beta/media/{mediaId}/keywords/fa29317d-33d7-47e4-8beb-fd7b4484927c" }
+    ]
+  },
+  "topics" : {
+    "name" : "latest"
+    "revision" : "cc7bd8d1-bb76-47c9-bf52-54acd43aea57",
+    "terms" : [
+      { 
+        "name" : "mobile industry",
+        "id" : "6f71daf4-4f97-45c6-a29f-5726cbdba270"
+        "spotting" : false,
+        "keywords" : [ 
+          "mobile advertising",
+          "mobile usage"
+        ]
+      },
+      {
+        "name" : "mobile-phone",
+        "spotting" : true,
+        "keywords" : [
+          "iPhone"
+        ]
+      }
+    ]
+  }
+}

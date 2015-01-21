@@ -1,0 +1,20 @@
+{
+  "_links" : {
+    "self" : { "href" : "/v2-beta/media/{mediaId}/predictions/latest" },
+    "revision" : { "href" : "/v2-beta/media/{mediaId}/predictions/221ed6d3-b6bb-46d3-99f5-b0330818d416" },
+    "provenance" : [
+      { "href" : "/v2-beta/media/{mediaId}/transcripts/e0589bc2-5266-4c52-8347-42c2c186fe16" }
+    ]
+  },
+  "predictions" : {
+    "name" : "latest",
+    "revision" : "221ed6d3-b6bb-46d3-99f5-b0330818d416",
+    "sales-lead" : {
+      "probability" : 0.025,
+      "model" : {
+        "name" : "saled-lead",
+        "revision" : "dc6256f1-9871-441b-9ab1-2167600e5d9e"
+      }
+    }
+  }  
+}

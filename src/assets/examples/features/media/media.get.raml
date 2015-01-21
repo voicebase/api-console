@@ -1,0 +1,20 @@
+# /v2:
+  # /media:
+    # /{mediaId}
+      # get:
+        description: Get this media and associated analytics.
+        queryParameters:
+          concise:
+            required: false
+            default: false
+          includes:
+            repeat: true
+            required: false
+          excludes:
+            repeat: true
+            required: false
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include media.item.get.json

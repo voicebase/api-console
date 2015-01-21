@@ -1,0 +1,20 @@
+{
+  "metadata" : {
+    "title" : "Best Scene Ever",
+    "speakers" : [ "Arthur Dent", "Ford Prefect" ],
+    "external" : {
+      "id" : "abcd1234",
+      "name" : "Something or other"
+    },
+    "extended" : {
+      "location" : "Magrathea",
+      "region-of-the-country" : "Northern"
+    }
+  },
+  "positional" : {
+    "18.5" : { 
+      "event" : "whale hits ground",
+      "utterance" : "I wonder if it will be friends with me?"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "_links" : {
+    "self" : { "href" : "/v2-beta/media/{mediaId}/utterances/latest" },
+    "revision" : { "href" : "/v2-beta/media/{mediaId}/utterances/e0deb839-4305-4465-af10-41446754f630" },
+    "provenance" : [
+      { "href" : "/v2-beta/media/{mediaId}/transcripts/e0589bc2-5266-4c52-8347-42c2c186fe16" }
+    ]
+  },
+  "utterances" : {
+    "name" : "latest",
+    "revision" : "e0deb839-4305-4465-af10-41446754f630",
+    "pci" : [
+      { "p" : 1, "c" : 0.944, "s" : 1630.25, "e" : 1639.01, "w" : "4111111111111111" }
+    ]
+  }
+}
