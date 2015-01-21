@@ -1,0 +1,10 @@
+{ 
+  "_links" : {
+    "self" : { "href" : "/v2-beta/definitions/" },
+    "collections" : [
+      { "href" : "/v2-beta/definitions/transcripts/", "title" : "Definitions for trascription" },
+      { "href" : "/v2-beta/definitions/keywords/", "title" : "Definitions for keyword extraction" },
+      { "href" : "/v2-beta/definitions/prediction/", "title" : "Definitions for prediction" }
+    ]
+  }
+}

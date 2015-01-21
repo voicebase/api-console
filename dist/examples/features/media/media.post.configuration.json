@@ -1,0 +1,28 @@
+{
+  "configuration" : {              
+    "template" : {
+      "name" : "default"
+    },
+    "transcripts" : {
+      "vocabularies" : [ "investor-relations" ]
+    },
+    "keywords" : {
+      "groups" : [ "mobile-phone" ]
+    },
+    "predictions" : {
+      "models" : {
+        "sales-lead" : {
+          "output" : "extended.sales-followup"
+        },
+        "not-a-sales-lead" : {
+          "output" : "extended.sales-ignore"
+        }
+      }
+    },
+    "publish" : {
+      "callbacks" : [
+        "https://api.example.org/callbacks/{mediaId}"
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+# /v2:
+  # /media:
+    # /{mediaId}
+      # get:
+        description: Get this media and associated analytics.
+        queryParameters:
+          include:
+            description: Include specific results (e.g. transcripts, keywords, topics).
+            repeat: true
+            required: false
+          exclude:
+            description: Exclude specific results (e.g. transcripts, keywords, topics).
+            repeat: true
+            required: false
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include media.item.get.json

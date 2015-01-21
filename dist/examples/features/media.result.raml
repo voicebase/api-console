@@ -1,0 +1,24 @@
+# resourceTypes:
+  # mediaResult:
+    description: Collection of <<resourcePathName>> available for this media item.
+    get:
+      description: Get available <<resourcePathName>>.
+      responses:
+        200:
+          body:
+            application/json:
+              example: <<get.collection.example>>
+    /{<<item.name>>Id}:
+      displayName: A specific <<item.human.name>>.
+      uriParameters:
+        <<item.name>>Id:
+          default: latest
+      
+      get:
+        description: Get a specific <<item.human.name>>.
+        responses:
+          200:
+            body:
+              application/json:
+                example: <<get.item.example>>
+        

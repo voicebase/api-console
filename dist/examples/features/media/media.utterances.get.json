@@ -1,0 +1,15 @@
+{
+  "_links" : {
+    "self" : { "href" : "/v2-beta/media/{mediaId}/utterances/" },
+    "items" : { "href" : "/v2-beta/media/{mediaId}/utterances/{utterancesId}" },
+  },
+  "utterances" : [
+    {
+      "name" : "latest",
+      "revision" : "e0deb839-4305-4465-af10-41446754f630",
+      "pci" : [
+        { "p" : 1, "c" : 0.944, "s" : 1630.25, "e" : 1639.01, "w" : "4111111111111111" }
+      ]
+    }
+  ]
+}

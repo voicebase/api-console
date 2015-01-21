@@ -1,0 +1,40 @@
+{
+  "_links" : {  
+    "self" : { "href" : "/v2-beta/templates/default" },
+    "revision" : { "href" : "/v2-beta/templates/983e5a8b-c20b-47f5-9d71-10edeaae8317" }
+  }, 
+  "template" : {
+    "name" : "default",
+    "default" : true,
+    "revision" : "983e5a8b-c20b-47f5-9d71-10edeaae8317",
+    "created" : "2015-01-05T23:11:16Z",
+    "ingest" : {
+      "priority" : "normal"
+    },
+    "transcripts" : {
+      "engine" : "standard",
+      "human" : { "enabled" : false },
+      "vocabularies" : [ ]
+    },
+    "keywords" : {
+      "groups" : [ ]
+    },
+    "topics" : {
+      "lists" : [ ]
+    },
+    "entities" : {
+      "sets" : [ ]
+    },
+    "utterances" : {
+      "detections" : [ ],
+      "redactions" : [ ]
+    },
+    "predictions" : {
+      "outcomes" : [ ]
+    },
+    "publish" : {
+      "shares" : "*",
+      "callbacks" : [ ]
+    }
+  }
+}

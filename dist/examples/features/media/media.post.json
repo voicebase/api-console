@@ -1,0 +1,14 @@
+{
+  "_links" : { 
+    "self" : { "href" : "/v2-beta/media/3c7499c2-aebd-4efc-aaf7-0ad4636cc160/" }
+  },
+  "mediaId" : "3c7499c2-aebd-4efc-aaf7-0ad4636cc160",
+  "status" : "accepted",
+  "progress" : {
+    "ingest" : { "status" : "pending" },
+    "transcripts" : { "status" : "pending" },
+    "keywords" : { "status" : "pending" },
+    "predictions" : { "status" : "pending" },
+    "publish" : { "status" : "pending" }
+  }
+}

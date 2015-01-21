@@ -1,0 +1,164 @@
+# /access:
+  displayName: Access and user management.
+  description: Manage access for organizations and users.
+  securedBy: [ Basic ]
+  get:
+    description: Access and user management operations.
+
+  post: 
+    description: Provision access for a customer.
+  
+  /users:
+    displayName: Users.
+    description: View, create, or delete users.
+    securedBy: [ Basic ]
+    get:
+      description: View existing users.
+      responses:
+        200:
+          body:
+            application/json: 
+              example: !include examples/access.users.get.json
+        
+    post:
+      description: Add a new user.
+      body: 
+        application/json:
+          example: |
+            { 
+              "v1" : { 
+                "key" : "xxxxxxxx-yyyy-4xxx-zzzzzzzzzzzz", 
+                "secret" : "abcdef123456", 
+                "email" : "xxxx_prediction@voicebase.com" 
+              }
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                { 
+                  "status" : "SUCCESS", 
+                  "user" : { 
+                    "id" : "xxxxxxxx-yyyy-4xxx-zzzzzzzzzzzz", 
+                    "email" : "xxxx@voicebase.com",
+                    "tokens" : {
+                      "bearer" : [
+                        "NNNNNNNmmmmm"
+                      ]
+                    }
+                  }
+                }
+    
+    /{userId}: # https://apis.voicebase.com/v2/users/{userId}
+      displayName: User-specific operations
+      description: Manage a users authentication and tokens
+      uriParameters:
+        userId:
+          displayName: userId
+          description: User name identified or uuid
+          type: string
+          default: admin
+      securedBy: [ Basic ]
+      get:
+        description: Details for a specific user.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  { 
+                    "user" : { 
+                      "id" : "xxxxxxxx-yyyy-4xxx-zzzzzzzzzzzz", 
+                      "email" : "xxxx@voicebase.com",
+                      "tokens" : [
+                        { "type" : "Bearer", "token" : "NNNNNNNmmmmm" }
+                      ]
+                    }
+                  }
+       
+      delete:
+        description: Delete a user account.
+        
+      /tokens:
+        displayName: Access tokens for a user
+        securedBy: [ Basic ]
+        get:
+          description: |
+            Returns all current tokens for a user
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    { 
+                      "tokens" : [
+                        { 
+                          "token" : "WLtrGY1UB1VUXkDaf0LSxDIhIWb-z4TSS8tERTMMvAjnCiRgRoa9AF125YRjITrhKAMkh2TtmhR-qelXK9XteA",
+                          "type" : "Bearer",
+                          "expires" : "2015-01-06T01:02:01Z",
+                          "privileges": [
+                            { 
+                              "mediaId" : "6441958b-26c2-44c1-84f0-6fc5dd13ce71",
+                              "rights" : [ "play" ]
+                            }
+                          ]
+                        }
+                      ] 
+                    }
+        post:
+          description: |
+            Create a new token.
+          body:
+            application/json:
+              example: |
+                { 
+                  "token" : { 
+                    "privileges": [
+                      { 
+                        "mediaId" : "6441958b-26c2-44c1-84f0-6fc5dd13ce71",
+                        "rights" : [ "play" ]
+                      }
+                    ],
+                    "expires" : "2015-01-06T01:02:01Z"
+                  }
+                }
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    { 
+                      "status" : "SUCCESS",
+                      "token" : {
+                        "type" : "Bearer",
+                        "token" : "NNNNNNmmmmmmmm"
+                      }
+                    }
+        /{token}:
+          displayName: Manage a specific token.
+          description: Get or delete a specific token.
+          securedBy: [ Basic ]
+          get: 
+            description: |
+              Returns metadata for the specified token.
+            responses:
+              200:
+                body:
+                  application/json:
+                    example: |
+                      { 
+                        "token" : { 
+                          "privileges": [
+                            { 
+                              "mediaId" : "6441958b-26c2-44c1-84f0-6fc5dd13ce71",
+                              "rights" : [ "play" ]
+                            }
+                          ],
+                          "expires" : "2015-01-06T01:02:01Z"
+                        }
+                      }
+          delete:
+            description: Delete and revoke this token.
+            responses:
+              204:

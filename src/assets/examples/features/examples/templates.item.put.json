@@ -1,0 +1,46 @@
+{
+  "_links" : {  
+    "self" : { "href" : "/v2-beta/templates/default" },
+    "revision" : { "href" : "/v2-beta/templates/983e5a8b-c20b-47f5-9d71-10edeaae8317" }
+  }, 
+  "template" : {
+    "name" : "default",
+    "default" : true,
+    "revision" : "6a086d43-d465-4f22-a64e-1cc24d2ad152",
+    "revisions" : {
+      "6a086d43-d465-4f22-a64e-1cc24d2ad152" : "2015-01-12T07:59:12Z",
+      "983e5a8b-c20b-47f5-9d71-10edeaae8317" : "2015-01-05T23:11:16Z"
+    }
+    "created" : "2015-01-12T07:59:12Z",
+    "ingest" : {
+      "priority" : "normal"
+    },
+    "transcripts" : {
+      "engine" : "premium"
+      "human" : { "enabled" : false },
+      "vocabularies" : [ "investor-relations" ]
+    },
+    "keywords" : {
+      "groups" : [ "mobile-phone" ]
+    },
+    "topics" : {
+      "lists" : [ ]
+    },
+    "entities" : {
+      "sets" : [ ]
+    },
+    "utterances" : {
+      "detections" : [ ],
+      "redactions" : [ ]
+    },
+    "predictions" : {
+      "models" : [ "likely-to-cancel" ]
+    },
+    "publish" : {
+      "shares" : "*",
+      "callbacks" : [
+        "https://api.example.org/callbacks/{mediaId}"
+      ]
+    }
+  }
+}

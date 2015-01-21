@@ -1,0 +1,102 @@
+# /media:
+  type:
+    media.postable:
+  displayName: Media collection 
+  description: Collection of all media and associated analytical results.
+  securedBy: [ OAuth2.0 ]
+  get:
+    description: Get this media and associated analytics.
+    queryParameters:
+      include:
+        description: Include specific results (e.g. transcripts, keywords, topics).
+        repeat: true
+        required: false
+      exclude:
+        description: Exclude specific results (e.g. transcripts, keywords, topics).
+        repeat: true
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include media/media.item.get.json
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          media:
+            - type: file
+              required: true
+              description: Media file attached to the request. 
+            - type: string
+              required: true
+              description: URL where media file can be downloaded.
+  
+  /{mediaId}:
+    type:
+      media.postable:
+    displayName: Media item
+    description: Media item and associated analytical results.
+    get:
+      description: Get this media and associated analytics.
+      queryParameters:
+        include:
+          description: Include specific results (e.g. transcripts, keywords, topics).
+          repeat: true
+          required: false
+        exclude:
+          description: Exclude specific results (e.g. transcripts, keywords, topics).
+          repeat: true
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include media/media.item.get.json
+    # Encodings of the supplied media file.
+    # /encodings: !include encodings.raml
+
+    # Machine, human, and user-edited transcripts.
+    /transcripts:
+      type: 
+        media.result:
+          item.name: transcripts
+          item.human.name: set of transcripts
+          get.collection.example: !include media.transcripts.get.json
+          get.item.example: !include media.transcripts.item.get.json
+
+    # Keywords extracted from a transcript and (possibly) curated.
+    /keywords:
+      type: 
+        media.result:
+          item.name: keywords
+          item.human.name: set of keywords
+          get.collection.example: !include media/media.keywords.get.json
+          get.item.example: !include media/media.keywords.item.get.json
+
+    # Topics gathered from keywords and (possibly) curated.
+    /topics:
+      type: 
+        media.result:
+          item.name: topics
+          item.human.name: set of topics
+          get.collection.example: !include media/media.topics.get.json
+          get.item.example: !include media/media.topics.item.get.json
+
+    # Utterances recognized from transcripts and derived data.
+    /utterances: 
+      type: 
+        media.result:
+          item.name: utterances
+          item.human.name: set of utterances
+          get.collection.example: !include media/media.utterances.get.json
+          get.item.example: !include media/media.utterances.item.get.json
+
+    # Predictions made from transcripts and derived data.
+    /predictions: 
+      type: 
+        media.result:
+          item.name: predictions
+          item.human.name: set of predictions
+          get.collection.example: !include media/media.predictions.get.json
+          get.item.example: !include media/media.predictions.item.get.json

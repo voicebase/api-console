@@ -1,0 +1,13 @@
+{
+  "group" : {
+    "name" : "mobile-phone",
+    "revision" : "a818982c-906a-4050-a87c-da698c59342a",
+    "keywords" : [
+      "iPhone",
+      "Android",
+      "Samsung",
+      "Nokia",
+      "Smartphone"
+    ]
+  }
+}

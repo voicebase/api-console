@@ -1,0 +1,8 @@
+{ 
+  "_links" : {
+    "self" : { "href" : "/v2-beta/definitions/keywords/" },
+    "collections" : [
+      { "href" : "/v2-beta/definitions/keywords/groups/", "Defitinitions of keyword groups" }
+    ]
+  }
+}
