@@ -1,10 +1,28 @@
 <div class="raml-console-vbs-tokens-container">
-  <button type="button" ng-click="showForm()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get">Get tokens</button>
+  <button type="button" ng-click="showForm()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get" ng-show="!tokens.length">
+    <span ng-show="!isLoaded">Get tokens</span>
+    <span ng-show="isLoaded">Getting...</span>
+  </button>
+
+  <div ng-show="tokens.length > 0" class="raml-console-vbs-tokens-dropdown-container">
+    <span class="raml-console-dropdown-label">Tokens: </span>
+    <select class="raml-console-sidebar-input raml-console-dropdown">
+      <option ng-repeat="token in tokens" value="{{$index}}">{{token}}</option>
+    </select>
+  </div>
+
   <div class="raml-console-token-auth-form" ng-show="showAuthForm">
-    <basic-auth></basic-auth>
-    <div class="raml-console-auth-form-btns">
-      <button type="button" ng-click="auth()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get">Auth</button>
-      <button type="button" ng-click="hideForm()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-delete">Cancel</button>
-    </div>
+    <form name="form" novalidate>
+      <basic-auth credentials='credentials'></basic-auth>
+      <div class="raml-console-auth-form-btns">
+        <button type="button" ng-click="auth($event)" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get">Auth</button>
+        <button type="button" ng-click="hideForm()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-delete">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="raml-console-tokens-error" ng-show="tokenError">
+    <span class="raml-console-close" ng-click="hideError()"><span>x</span></span>
+    {{ tokenError }}
   </div>
 </div>

@@ -5,7 +5,7 @@
   .get-tokens {
   }
 
-  .token-auth-form {
+  .token-auth-form, .tokens-error {
     float: right;
     background: #FFF;
     z-index: 10;
@@ -19,6 +19,42 @@
     .auth-form-btns {
       margin-top: -15px;
       padding: 0 16px 16px;
+    }
+  }
+
+  .vbs-tokens-dropdown-container{
+    display: table;
+
+    .dropdown-label {
+      float: left;
+      margin-top: 10px;
+      margin-right: 15px;
+    }
+
+    .dropdown {
+      float: left;
+      width: 150px;
+    }
+  }
+
+  .tokens-error {
+    padding: 15px;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+
+    .close {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      color: inherit;
+      cursor: pointer;
+      opacity: 0.5;
+      font-weight: bold;
+
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
