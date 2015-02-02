@@ -13,6 +13,21 @@
         $scope.credentials = {};
         $scope.showAuthForm = false;
 
+        var getResource = function() {
+          $scope.resource = null;
+          var res = $scope.raml.resources.filter(function(resource) {
+            return resource.toString() === "/access/users/{userId}/tokens"
+          });
+          if(res.length > 0) {
+            $scope.resource = angular.copy(res[0]);
+            delete $scope.resource.uriParametersForDocumentation['userId'];
+          }
+
+          $scope.methodInfo = $scope.resource.methods[0];
+          $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
+          toUIModel($scope.resource.uriParametersForDocumentation);
+        }();
+
         $scope.isLoaded = false;
         $scope.tokens = [];
         $scope.tokenError = '';
@@ -34,7 +49,7 @@
           else {
             $scope.isLoaded = true;
             $scope.hideForm();
-            voicebaseTokensApi.getTokens().then(function(tokens){
+            voicebaseTokensApi.getTokens($scope.credentials, $scope.context.uriParameters.values).then(function(tokens){
               $scope.isLoaded = false;
               $scope.tokens = tokens;
             }, function(error){
@@ -47,6 +62,15 @@
         $scope.hideError = function(){
           $scope.tokenError = '';
         };
+
+        function toUIModel (collection) {
+          if(collection) {
+            Object.keys(collection).map(function (key) {
+              collection[key][0].id = key;
+            });
+          }
+        }
+
       },
       link: function (scope, element) {
         jQuery(element).find('.raml-console-dropdown').change(function(){

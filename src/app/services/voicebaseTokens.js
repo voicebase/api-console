@@ -13,18 +13,29 @@
         return currentToken;
     };
 
-    var getTokens = function(){
+    var getTokens = function(credentials, parameters) {
       var deferred = $q.defer();
 
-      setTimeout(function(){
-        tokens = [
-          '123123',
-          '234234',
-          '345345'
-        ];
-        deferred.resolve(tokens);
-        //deferred.reject('Something goes wrong!');
-      }, 3000);
+      var username = credentials.username;
+      var password = credentials.password;
+      var apis = parameters.apis[0];
+      var version = parameters.version[0];
+
+      jQuery.ajax({
+        url: 'https://' + apis + '.voicebase.com/' + version + '/access/users/' + username + '/tokens',
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader('Authorization', 'Basic ' + btoa(username + ':' + password));
+        },
+        success: function(tokens){
+          deferred.resolve(tokens);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
 
       return deferred.promise;
     };

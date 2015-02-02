@@ -14,6 +14,7 @@
   <div class="raml-console-token-auth-form" ng-show="showAuthForm">
     <form name="form" novalidate>
       <basic-auth credentials='credentials'></basic-auth>
+      <named-parameters ng-if="resource.uriParametersForDocumentation" src="resource.uriParametersForDocumentation" context="context" type="uriParameters" title="URI Parameters"></named-parameters>
       <div class="raml-console-auth-form-btns">
         <button type="button" ng-click="auth($event)" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get">Auth</button>
         <button type="button" ng-click="hideForm()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-delete">Cancel</button>
