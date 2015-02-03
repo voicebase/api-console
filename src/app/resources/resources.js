@@ -22,6 +22,10 @@
           $scope.disableThemeSwitcher = true;
         }
 
+        if ($attrs.hasOwnProperty('disableRamlClientGenerator')) {
+          $scope.disableRamlClientGenerator = true;
+        }
+
         if ($attrs.hasOwnProperty('disableTitle')) {
           $scope.disableTitle = true;
         }
@@ -85,12 +89,14 @@
           var $this = jQuery($event.currentTarget);
 
           if ($this.hasClass('raml-console-resources-expanded')) {
+            $scope.collapsed = true;
             $this.text('expand all');
             $this.removeClass('raml-console-resources-expanded');
             jQuery('#raml-console-resources-container').find('ol.raml-console-resource-list').velocity('slideUp', {
               duration: 200
             });
           } else {
+            $scope.collapsed = false;
             $this.text('collapse all');
             $this.addClass('raml-console-resources-expanded');
             jQuery('#raml-console-resources-container').find('ol.raml-console-resource-list').velocity('slideDown', {
@@ -98,8 +104,8 @@
             });
           }
 
-          jQuery('#raml-console-resources-container').find('.raml-console-resource-list-root ol.raml-console-resource-list').toggleClass('raml-console-is-collapsed');
-          jQuery('#raml-console-resources-container').find('button.raml-console-resource-root-toggle').toggleClass('raml-console-is-active');
+          // jQuery('#raml-console-resources-container').find('.raml-console-resource-list-item ol.raml-console-resource-list').toggleClass('raml-console-is-collapsed');
+          // jQuery('#raml-console-resources-container').find('button.raml-console-resource-root-toggle').toggleClass('raml-console-is-active');
         };
 
         $scope.hasResourcesWithChilds = function () {

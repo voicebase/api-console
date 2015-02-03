@@ -362,8 +362,8 @@
       var xhr     = new root.XMLHttpRequest();
       var headers = options.headers || {};
 
-      // Open the request to the uri and method.
-      xhr.open(options.method, options.uri);
+      // Open the request to the url and method.
+      xhr.open(options.method, options.url);
 
       // When the request has loaded, attempt to automatically parse the body.
       xhr.onload = function () {
@@ -400,20 +400,20 @@
      * @param {Function} done
      */
     ClientOAuth2.prototype.request = function (options, done) {
-      var lib     = http;
-      var reqOpts = url.parse(options.uri);
+      var lib        = http;
+      var reqOptions = url.parse(options.url);
 
       // If the protocol is over https, switch request library.
-      if (reqOpts.protocol === 'https:') {
+      if (reqOptions.protocol === 'https:') {
         lib = https;
       }
 
       // Alias request options.
-      reqOpts.method  = options.method;
-      reqOpts.headers = options.headers;
+      reqOptions.method  = options.method;
+      reqOptions.headers = options.headers;
 
       // Send the http request and listen for the response to finish.
-      var req = lib.request(reqOpts, function (res) {
+      var req = lib.request(reqOptions, function (res) {
         var data = '';
 
         // Callback to `done` if a response error occurs.
@@ -473,44 +473,44 @@
   /**
    * Sign a standardised request object with user authentication information.
    *
-   * @param  {Object} opts
+   * @param  {Object} options
    * @return {Object}
    */
-  ClientOAuth2Token.prototype.sign = function (opts) {
+  ClientOAuth2Token.prototype.sign = function (options) {
     if (!this.accessToken) {
       throw new Error('Unable to sign without access token');
     }
 
-    opts.headers = opts.headers || {};
+    options.headers = options.headers || {};
 
     if (this.tokenType === 'bearer') {
-      opts.headers.Authorization = 'Bearer ' + this.accessToken;
+      options.headers.Authorization = 'Bearer ' + this.accessToken;
     } else {
-      var parts    = opts.uri.split('#');
+      var parts    = options.url.split('#');
       var token    = 'access_token=' + this.accessToken;
-      var uri      = parts[0].replace(/[?&]access_token=[^&#]/, '');
+      var url      = parts[0].replace(/[?&]access_token=[^&#]/, '');
       var fragment = parts[1] ? '#' + parts[1] : '';
 
-      // Prepend the correct query string parameter to the uri.
-      opts.uri = uri + (uri.indexOf('?') > -1 ? '&' : '?') + token + fragment;
+      // Prepend the correct query string parameter to the url.
+      options.url = url + (url.indexOf('?') > -1 ? '&' : '?') + token + fragment;
 
-      // Attempt to avoid storing the uri in proxies, since the access token
+      // Attempt to avoid storing the url in proxies, since the access token
       // is exposed in the query parameters.
-      opts.headers.Pragma           = 'no-store';
-      opts.headers['Cache-Control'] = 'no-store';
+      options.headers.Pragma           = 'no-store';
+      options.headers['Cache-Control'] = 'no-store';
     }
 
-    return opts;
+    return options;
   };
 
   /**
    * Make a HTTP request as the user.
    *
-   * @param {Object}   opts
+   * @param {Object}   options
    * @param {Function} done
    */
-  ClientOAuth2Token.prototype.request = function (opts, done) {
-    return this.client.client.request(this.sign(opts), done);
+  ClientOAuth2Token.prototype.request = function (options, done) {
+    return this.client.client.request(this.sign(options), done);
   };
 
   /**
@@ -529,7 +529,7 @@
     var authorization = btoa(options.clientId + ':' + options.clientSecret);
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':        'application/json, application/x-www-form-urlencoded',
@@ -591,7 +591,7 @@
     var authorization = btoa(options.clientId + ':' + options.clientSecret);
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':        'application/json, application/x-www-form-urlencoded',
@@ -651,13 +651,13 @@
   };
 
   /**
-   * Get the user access token from the uri.
+   * Get the user access token from the url.
    *
-   * @param {String}   uri
+   * @param {String}   url
    * @param {String}   [state]
    * @param {Function} done
    */
-  TokenFlow.prototype.getToken = function (uri, state, done) {
+  TokenFlow.prototype.getToken = function (url, state, done) {
     var options = this.client.options;
     var err;
 
@@ -667,17 +667,17 @@
       state = null;
     }
 
-    // Make sure the uri matches our expected redirect uri.
-    if (uri.substr(0, options.redirectUri.length) !== options.redirectUri) {
-      return done(new Error('Invalid uri (should to match redirect): ' + uri));
+    // Make sure the url matches our expected redirect url.
+    if (url.substr(0, options.redirectUri.length) !== options.redirectUri) {
+      return done(new Error('Invalid url (should to match redirect): ' + url));
     }
 
-    var queryString    = uri.replace(/^[^\?]*|\#.*$/g, '').substr(1);
-    var fragmentString = uri.replace(/^[^\#]*/, '').substr(1);
+    var queryString    = url.replace(/^[^\?]*|\#.*$/g, '').substr(1);
+    var fragmentString = url.replace(/^[^\#]*/, '').substr(1);
 
-    // Check whether a query string is present in the uri.
+    // Check whether a query string is present in the url.
     if (!queryString && !fragmentString) {
-      return done(new Error('Unable to process uri: ' + uri));
+      return done(new Error('Unable to process url: ' + url));
     }
 
     // Merge the fragment with the the query string. This is because, at least,
@@ -741,7 +741,7 @@
     var authorization = btoa(options.clientId + ':' + options.clientSecret);
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':        'application/json, application/x-www-form-urlencoded',
@@ -801,11 +801,11 @@
    * Get the code token from the redirected uri and make another request for
    * the user access token.
    *
-   * @param {String}   uri
+   * @param {String}   url
    * @param {String}   [state]
    * @param {Function} done
    */
-  CodeFlow.prototype.getToken = function (uri, state, done) {
+  CodeFlow.prototype.getToken = function (url, state, done) {
     var self    = this;
     var options = this.client.options;
     var err;
@@ -823,17 +823,17 @@
       'accessTokenUri'
     ]);
 
-    // Make sure the uri matches our expected redirect uri.
-    if (uri.substr(0, options.redirectUri.length) !== options.redirectUri) {
-      return done(new Error('Invalid uri (should to match redirect): ' + uri));
+    // Make sure the url matches our expected redirect url.
+    if (url.substr(0, options.redirectUri.length) !== options.redirectUri) {
+      return done(new Error('Invalid url (should to match redirect): ' + url));
     }
 
     // Extract the query string from the url.
-    var queryString = uri.replace(/^[^\?]*|\#.*$/g, '').substr(1);
+    var queryString = url.replace(/^[^\?]*|\#.*$/g, '').substr(1);
 
-    // Check whether a query string is present in the uri.
+    // Check whether a query string is present in the url.
     if (!queryString) {
-      return done(new Error('Unable to process uri: ' + uri));
+      return done(new Error('Unable to process url: ' + url));
     }
 
     var query = uriDecode(queryString);
@@ -854,7 +854,7 @@
     }
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':       'application/json, application/x-www-form-urlencoded',

@@ -84,7 +84,7 @@
           var editorHeight = 50;
 
           if (jqXhr.responseText) {
-            var lines = jqXhr.responseText.split('\n').length;
+            var lines = $scope.response.body.split('\n').length;
             editorHeight = lines > 100 ? 2000 : 25*lines;
           }
 
@@ -324,14 +324,17 @@
               //// TODO: Make a uniform interface
               if (scheme && scheme.type === 'OAuth 2.0') {
                 authStrategy = new RAML.Client.AuthStrategies.Oauth2(scheme, $scope.credentials);
-                authStrategy.authenticate(request.toOptions(), handleResponse);
+                authStrategy.authenticate(request.toOptions(), function (jqXhr) {
+                  $scope.requestOptions = request.toOptions();
+                  handleResponse(jqXhr);
+                });
                 return;
               }
 
               authStrategy = RAML.Client.AuthStrategies.for(scheme, $scope.credentials);
               authStrategy.authenticate().then(function(token) {
                 token.sign(request);
-
+                $scope.requestOptions = request.toOptions();
                 jQuery.ajax(request.toOptions()).then(
                   function(data, textStatus, jqXhr) { handleResponse(jqXhr); },
                   function(jqXhr) { handleResponse(jqXhr); }
@@ -347,6 +350,8 @@
           }
         };
 
+        $scope.documentationEnabled = true;
+
         $scope.toggleSidebar = function ($event) {
           var $this        = jQuery($event.currentTarget);
           var $panel       = $this.closest('.raml-console-resource-panel');
@@ -358,6 +363,7 @@
           }
 
           if ($sidebar.hasClass('raml-console-is-fullscreen')) {
+            $scope.documentationEnabled = true;
             $sidebar.velocity(
               { width: $scope.singleView ? 0 : sidebarWidth },
               {
@@ -375,9 +381,14 @@
               { width: '100%' },
               {
                 duration: 200,
-                complete: completeAnimation
+                complete: function (element) {
+                  jQuery(element).removeAttr('style');
+                  $scope.documentationEnabled = false;
+                  apply();
+                }
               }
             );
+
             $sidebar.addClass('raml-console-is-fullscreen');
             $sidebar.addClass('raml-console-is-responsive');
             $panel.addClass('raml-console-has-sidebar-fullscreen');
@@ -410,7 +421,11 @@
             { width: animation },
             {
               duration: speed,
-              complete: completeAnimation
+              complete: function (element) {
+                jQuery(element).removeAttr('style');
+                $scope.documentationEnabled = false;
+                apply();
+              }
             }
           );
 
@@ -437,6 +452,12 @@
           } else {
             $scope.showRequestMetadata = true;
           }
+        };
+
+        $scope.showResponseMetadata = true;
+
+        $scope.toggleResponseMetadata = function () {
+          $scope.showResponseMetadata = !$scope.showResponseMetadata;
         };
       }
     };

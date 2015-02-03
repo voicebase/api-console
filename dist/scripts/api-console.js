@@ -118,6 +118,10 @@
 
         $scope.currentStatusCode = '200';
 
+        if ($scope.methodInfo.responseCodes && $scope.methodInfo.responseCodes.length > 0) {
+          $scope.currentStatusCode = $scope.methodInfo.responseCodes[0];
+        }
+
         function beautify(body, contentType) {
           if(contentType.indexOf('json')) {
             body = vkbeautify.json(body, 2);
@@ -342,7 +346,7 @@
 
           if (responses) {
             Object.keys(responses).map(function (key) {
-              if(typeof responses[key].body !== 'undefined') {
+              if(responses[key] && typeof responses[key].body !== 'undefined') {
                 responseInfo[key] = {};
 
                 Object.keys(responses[key].body).sort().reverse().map(function (type) {
@@ -940,7 +944,7 @@
           var editorHeight = 50;
 
           if (jqXhr.responseText) {
-            var lines = jqXhr.responseText.split('\n').length;
+            var lines = $scope.response.body.split('\n').length;
             editorHeight = lines > 100 ? 2000 : 25*lines;
           }
 
@@ -1180,14 +1184,17 @@
               //// TODO: Make a uniform interface
               if (scheme && scheme.type === 'OAuth 2.0') {
                 authStrategy = new RAML.Client.AuthStrategies.Oauth2(scheme, $scope.credentials);
-                authStrategy.authenticate(request.toOptions(), handleResponse);
+                authStrategy.authenticate(request.toOptions(), function (jqXhr) {
+                  $scope.requestOptions = request.toOptions();
+                  handleResponse(jqXhr);
+                });
                 return;
               }
 
               authStrategy = RAML.Client.AuthStrategies.for(scheme, $scope.credentials);
               authStrategy.authenticate().then(function(token) {
                 token.sign(request);
-
+                $scope.requestOptions = request.toOptions();
                 jQuery.ajax(request.toOptions()).then(
                   function(data, textStatus, jqXhr) { handleResponse(jqXhr); },
                   function(jqXhr) { handleResponse(jqXhr); }
@@ -1203,6 +1210,8 @@
           }
         };
 
+        $scope.documentationEnabled = true;
+
         $scope.toggleSidebar = function ($event) {
           var $this        = jQuery($event.currentTarget);
           var $panel       = $this.closest('.raml-console-resource-panel');
@@ -1214,6 +1223,7 @@
           }
 
           if ($sidebar.hasClass('raml-console-is-fullscreen')) {
+            $scope.documentationEnabled = true;
             $sidebar.velocity(
               { width: $scope.singleView ? 0 : sidebarWidth },
               {
@@ -1231,9 +1241,14 @@
               { width: '100%' },
               {
                 duration: 200,
-                complete: completeAnimation
+                complete: function (element) {
+                  jQuery(element).removeAttr('style');
+                  $scope.documentationEnabled = false;
+                  apply();
+                }
               }
             );
+
             $sidebar.addClass('raml-console-is-fullscreen');
             $sidebar.addClass('raml-console-is-responsive');
             $panel.addClass('raml-console-has-sidebar-fullscreen');
@@ -1266,7 +1281,11 @@
             { width: animation },
             {
               duration: speed,
-              complete: completeAnimation
+              complete: function (element) {
+                jQuery(element).removeAttr('style');
+                $scope.documentationEnabled = false;
+                apply();
+              }
             }
           );
 
@@ -1293,6 +1312,12 @@
           } else {
             $scope.showRequestMetadata = true;
           }
+        };
+
+        $scope.showResponseMetadata = true;
+
+        $scope.toggleResponseMetadata = function () {
+          $scope.showResponseMetadata = !$scope.showResponseMetadata;
         };
       }
     };
@@ -1496,6 +1521,10 @@
           $scope.disableThemeSwitcher = true;
         }
 
+        if ($attrs.hasOwnProperty('disableRamlClientGenerator')) {
+          $scope.disableRamlClientGenerator = true;
+        }
+
         if ($attrs.hasOwnProperty('disableTitle')) {
           $scope.disableTitle = true;
         }
@@ -1559,12 +1588,14 @@
           var $this = jQuery($event.currentTarget);
 
           if ($this.hasClass('raml-console-resources-expanded')) {
+            $scope.collapsed = true;
             $this.text('expand all');
             $this.removeClass('raml-console-resources-expanded');
             jQuery('#raml-console-resources-container').find('ol.raml-console-resource-list').velocity('slideUp', {
               duration: 200
             });
           } else {
+            $scope.collapsed = false;
             $this.text('collapse all');
             $this.addClass('raml-console-resources-expanded');
             jQuery('#raml-console-resources-container').find('ol.raml-console-resource-list').velocity('slideDown', {
@@ -1572,8 +1603,8 @@
             });
           }
 
-          jQuery('#raml-console-resources-container').find('.raml-console-resource-list-root ol.raml-console-resource-list').toggleClass('raml-console-is-collapsed');
-          jQuery('#raml-console-resources-container').find('button.raml-console-resource-root-toggle').toggleClass('raml-console-is-active');
+          // jQuery('#raml-console-resources-container').find('.raml-console-resource-list-item ol.raml-console-resource-list').toggleClass('raml-console-is-collapsed');
+          // jQuery('#raml-console-resources-container').find('button.raml-console-resource-root-toggle').toggleClass('raml-console-is-active');
         };
 
         $scope.hasResourcesWithChilds = function () {
@@ -2060,7 +2091,7 @@
       var options = request.toOptions();
 
       return [
-        options.type.toUpperCase(),
+        options.method.toUpperCase(),
         this.encodeURI(options.url),
         rfc3986Encode(this.encodeParameters(request, oauthParams))
       ].join('&');
@@ -2416,7 +2447,7 @@
 
   RAML.Client.Request = {
     create: function(url, method) {
-      return new RequestDsl({ url: url, type: method });
+      return new RequestDsl({ url: url, method: method });
     }
   };
 })();
@@ -3578,8 +3609,8 @@ RAML.Inspector = (function() {
       var xhr     = new root.XMLHttpRequest();
       var headers = options.headers || {};
 
-      // Open the request to the uri and method.
-      xhr.open(options.method, options.uri);
+      // Open the request to the url and method.
+      xhr.open(options.method, options.url);
 
       // When the request has loaded, attempt to automatically parse the body.
       xhr.onload = function () {
@@ -3616,20 +3647,20 @@ RAML.Inspector = (function() {
      * @param {Function} done
      */
     ClientOAuth2.prototype.request = function (options, done) {
-      var lib     = http;
-      var reqOpts = url.parse(options.uri);
+      var lib        = http;
+      var reqOptions = url.parse(options.url);
 
       // If the protocol is over https, switch request library.
-      if (reqOpts.protocol === 'https:') {
+      if (reqOptions.protocol === 'https:') {
         lib = https;
       }
 
       // Alias request options.
-      reqOpts.method  = options.method;
-      reqOpts.headers = options.headers;
+      reqOptions.method  = options.method;
+      reqOptions.headers = options.headers;
 
       // Send the http request and listen for the response to finish.
-      var req = lib.request(reqOpts, function (res) {
+      var req = lib.request(reqOptions, function (res) {
         var data = '';
 
         // Callback to `done` if a response error occurs.
@@ -3689,44 +3720,44 @@ RAML.Inspector = (function() {
   /**
    * Sign a standardised request object with user authentication information.
    *
-   * @param  {Object} opts
+   * @param  {Object} options
    * @return {Object}
    */
-  ClientOAuth2Token.prototype.sign = function (opts) {
+  ClientOAuth2Token.prototype.sign = function (options) {
     if (!this.accessToken) {
       throw new Error('Unable to sign without access token');
     }
 
-    opts.headers = opts.headers || {};
+    options.headers = options.headers || {};
 
     if (this.tokenType === 'bearer') {
-      opts.headers.Authorization = 'Bearer ' + this.accessToken;
+      options.headers.Authorization = 'Bearer ' + this.accessToken;
     } else {
-      var parts    = opts.uri.split('#');
+      var parts    = options.url.split('#');
       var token    = 'access_token=' + this.accessToken;
-      var uri      = parts[0].replace(/[?&]access_token=[^&#]/, '');
+      var url      = parts[0].replace(/[?&]access_token=[^&#]/, '');
       var fragment = parts[1] ? '#' + parts[1] : '';
 
-      // Prepend the correct query string parameter to the uri.
-      opts.uri = uri + (uri.indexOf('?') > -1 ? '&' : '?') + token + fragment;
+      // Prepend the correct query string parameter to the url.
+      options.url = url + (url.indexOf('?') > -1 ? '&' : '?') + token + fragment;
 
-      // Attempt to avoid storing the uri in proxies, since the access token
+      // Attempt to avoid storing the url in proxies, since the access token
       // is exposed in the query parameters.
-      opts.headers.Pragma           = 'no-store';
-      opts.headers['Cache-Control'] = 'no-store';
+      options.headers.Pragma           = 'no-store';
+      options.headers['Cache-Control'] = 'no-store';
     }
 
-    return opts;
+    return options;
   };
 
   /**
    * Make a HTTP request as the user.
    *
-   * @param {Object}   opts
+   * @param {Object}   options
    * @param {Function} done
    */
-  ClientOAuth2Token.prototype.request = function (opts, done) {
-    return this.client.client.request(this.sign(opts), done);
+  ClientOAuth2Token.prototype.request = function (options, done) {
+    return this.client.client.request(this.sign(options), done);
   };
 
   /**
@@ -3745,7 +3776,7 @@ RAML.Inspector = (function() {
     var authorization = btoa(options.clientId + ':' + options.clientSecret);
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':        'application/json, application/x-www-form-urlencoded',
@@ -3807,7 +3838,7 @@ RAML.Inspector = (function() {
     var authorization = btoa(options.clientId + ':' + options.clientSecret);
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':        'application/json, application/x-www-form-urlencoded',
@@ -3867,13 +3898,13 @@ RAML.Inspector = (function() {
   };
 
   /**
-   * Get the user access token from the uri.
+   * Get the user access token from the url.
    *
-   * @param {String}   uri
+   * @param {String}   url
    * @param {String}   [state]
    * @param {Function} done
    */
-  TokenFlow.prototype.getToken = function (uri, state, done) {
+  TokenFlow.prototype.getToken = function (url, state, done) {
     var options = this.client.options;
     var err;
 
@@ -3883,17 +3914,17 @@ RAML.Inspector = (function() {
       state = null;
     }
 
-    // Make sure the uri matches our expected redirect uri.
-    if (uri.substr(0, options.redirectUri.length) !== options.redirectUri) {
-      return done(new Error('Invalid uri (should to match redirect): ' + uri));
+    // Make sure the url matches our expected redirect url.
+    if (url.substr(0, options.redirectUri.length) !== options.redirectUri) {
+      return done(new Error('Invalid url (should to match redirect): ' + url));
     }
 
-    var queryString    = uri.replace(/^[^\?]*|\#.*$/g, '').substr(1);
-    var fragmentString = uri.replace(/^[^\#]*/, '').substr(1);
+    var queryString    = url.replace(/^[^\?]*|\#.*$/g, '').substr(1);
+    var fragmentString = url.replace(/^[^\#]*/, '').substr(1);
 
-    // Check whether a query string is present in the uri.
+    // Check whether a query string is present in the url.
     if (!queryString && !fragmentString) {
-      return done(new Error('Unable to process uri: ' + uri));
+      return done(new Error('Unable to process url: ' + url));
     }
 
     // Merge the fragment with the the query string. This is because, at least,
@@ -3957,7 +3988,7 @@ RAML.Inspector = (function() {
     var authorization = btoa(options.clientId + ':' + options.clientSecret);
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':        'application/json, application/x-www-form-urlencoded',
@@ -4017,11 +4048,11 @@ RAML.Inspector = (function() {
    * Get the code token from the redirected uri and make another request for
    * the user access token.
    *
-   * @param {String}   uri
+   * @param {String}   url
    * @param {String}   [state]
    * @param {Function} done
    */
-  CodeFlow.prototype.getToken = function (uri, state, done) {
+  CodeFlow.prototype.getToken = function (url, state, done) {
     var self    = this;
     var options = this.client.options;
     var err;
@@ -4039,17 +4070,17 @@ RAML.Inspector = (function() {
       'accessTokenUri'
     ]);
 
-    // Make sure the uri matches our expected redirect uri.
-    if (uri.substr(0, options.redirectUri.length) !== options.redirectUri) {
-      return done(new Error('Invalid uri (should to match redirect): ' + uri));
+    // Make sure the url matches our expected redirect url.
+    if (url.substr(0, options.redirectUri.length) !== options.redirectUri) {
+      return done(new Error('Invalid url (should to match redirect): ' + url));
     }
 
     // Extract the query string from the url.
-    var queryString = uri.replace(/^[^\?]*|\#.*$/g, '').substr(1);
+    var queryString = url.replace(/^[^\?]*|\#.*$/g, '').substr(1);
 
-    // Check whether a query string is present in the uri.
+    // Check whether a query string is present in the url.
     if (!queryString) {
-      return done(new Error('Unable to process uri: ' + uri));
+      return done(new Error('Unable to process url: ' + url));
     }
 
     var query = uriDecode(queryString);
@@ -4070,7 +4101,7 @@ RAML.Inspector = (function() {
     }
 
     return this.client._request({
-      uri: options.accessTokenUri,
+      url: options.accessTokenUri,
       method: 'POST',
       headers: {
         'Accept':       'application/json, application/x-www-form-urlencoded',
@@ -4758,7 +4789,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
 
   $templateCache.put('directives/documentation.tpl.html',
-    "<div class=\"raml-console-resource-panel-primary\">\n" +
+    "<div class=\"raml-console-resource-panel-primary\" ng-if=\"documentationEnabled\">\n" +
     "  <!-- Request -->\n" +
     "  <header class=\"raml-console-resource-header\">\n" +
     "    <h3 class=\"raml-console-resource-head\">\n" +
@@ -5294,10 +5325,14 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "            <section class=\"raml-console-side-bar-try-it-description\">\n" +
     "              <header class=\"raml-console-sidebar-row raml-console-sidebar-header\">\n" +
-    "                <h3 class=\"raml-console-sidebar-head\">Response</h3>\n" +
+    "                <h3 class=\"raml-console-sidebar-head\">\n" +
+    "                  <button ng-class=\"{'raml-console-is-open':showResponseMetadata, 'raml-console-is-collapsed':!showResponseMetadata}\" class=\"raml-console-sidebar-expand-btn\" ng-click=\"toggleResponseMetadata()\">\n" +
+    "                    Response\n" +
+    "                  </button>\n" +
+    "                </h3>\n" +
     "              </header>\n" +
     "\n" +
-    "              <div class=\"raml-console-sidebar-row sidebar-response\" ng-class=\"{'raml-console-is-active':requestEnd}\">\n" +
+    "              <div class=\"raml-console-sidebar-row raml-console-sidebar-response\" ng-class=\"{'raml-console-is-active':showResponseMetadata}\">\n" +
     "                <h3 class=\"raml-console-sidebar-response-head\">Status</h3>\n" +
     "                <p class=\"raml-console-sidebar-response-item\">{{response.status}}</p>\n" +
     "\n" +
@@ -5357,14 +5392,14 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <div ng-if=\"loaded\">\n" +
     "    <div class=\"raml-console-meta-button-group\">\n" +
     "      <theme-switcher ng-if=\"!disableThemeSwitcher\"></theme-switcher>\n" +
-    "      <raml-client-generator></raml-client-generator>\n" +
+    "      <raml-client-generator ng-if=\"!disableRamlClientGenerator\"></raml-client-generator>\n" +
     "    </div>\n" +
     "\n" +
     "    <h1 ng-if=\"!disableTitle\" class=\"raml-console-title\">{{raml.title}}</h1>\n" +
     "\n" +
     "    <root-documentation></root-documentation>\n" +
     "\n" +
-    "    <ol id=\"raml-console-resources-container\" class=\"raml-console-resource-list raml-console-resource-list-root\">\n" +
+    "    <ol ng-class=\"{'raml-console-resources-container-no-title': disableTitle, 'raml-console-resources-container': !disableTitle}\" id=\"raml-console-resources-container\" class=\"raml-console-resource-list raml-console-resource-list-root\">\n" +
     "      <li id=\"raml_documentation\" class=\"raml-console-resource-list-item raml-console-documentation-header\">\n" +
     "        <div ng-if=\"proxy\" align=\"right\" class=\"raml-console-resource-proxy\">\n" +
     "          <label for=\"raml-console-api-behind-firewall\">API is behind a firewall <a href=\"http://www.mulesoft.org/documentation/display/current/Accessing+Your+API+Behind+a+Firewall\" target=\"_blank\">(?)</a></label>\n" +
@@ -5488,7 +5523,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "  <p class=\"raml-console-sidebar-input-container\" ng-if=\"ownerOptionsEnabled()\">\n" +
     "    <label for=\"username\" class=\"raml-console-sidebar-label\">Username <span class=\"raml-console-side-bar-required-field\">*</span></label>\n" +
-    "    <input required=\"true\" type=\"text\" name=\"username\" class=\"raml-console-sidebar-input sidebar-security-field\" ng-model=\"credentials.username\" ng-change=\"onChange()\"/>\n" +
+    "    <input required=\"true\" type=\"text\" name=\"username\" class=\"raml-console-sidebar-input raml-console-sidebar-security-field\" ng-model=\"credentials.username\" ng-change=\"onChange()\"/>\n" +
     "    <span class=\"raml-console-field-validation-error\"></span>\n" +
     "  </p>\n" +
     "\n" +
