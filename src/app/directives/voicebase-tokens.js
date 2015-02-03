@@ -16,17 +16,18 @@
         var getResource = function() {
           $scope.resource = null;
           var res = $scope.raml.resources.filter(function(resource) {
-            return resource.toString() === "/access/users/{userId}/tokens"
+            return resource.toString() === '/access/users/{userId}/tokens';
           });
           if(res.length > 0) {
             $scope.resource = angular.copy(res[0]);
-            delete $scope.resource.uriParametersForDocumentation['userId'];
+            delete $scope.resource.uriParametersForDocumentation.userId;
           }
 
           $scope.methodInfo = $scope.resource.methods[0];
           $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
           toUIModel($scope.resource.uriParametersForDocumentation);
-        }();
+        };
+        getResource();
 
         $scope.isLoaded = false;
         $scope.tokens = [];
