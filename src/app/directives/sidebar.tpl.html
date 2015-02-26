@@ -26,8 +26,8 @@
             <div class="raml-console-sidebar-row raml-console-sidebar-securty">
               <div class="raml-console-toggle-group raml-console-sidebar-toggle-group">
                 <label class="raml-console-sidebar-label">Security Scheme</label>
-                <select class="raml-console-sidebar-input" ng-model="currentSchemeType" style="margin-bottom: 0;">
-                 <option ng-repeat="(key, scheme) in securitySchemes" value="{{scheme.type}}" ng-selected="scheme.type=='Anonymous'">{{scheme.type}}</option>
+                <select ng-change="securitySchemeChanged(currentScheme)" class="raml-console-sidebar-input" ng-model="currentScheme" style="margin-bottom: 0;">
+                 <option ng-repeat="(key, scheme) in securitySchemes" value="{{scheme.id}}" ng-selected="scheme.type=='Anonymous'">{{scheme.name}}</option>
                 </select>
               </div>
             </div>
@@ -70,20 +70,11 @@
                   <span class="raml-console-sidebar-input-tooltip-container" ng-if="param.definitions[0].description">
                     <button tabindex="-1" class="raml-console-sidebar-input-tooltip"><span class="raml-console-visuallyhidden">Show documentation</span></button>
                     <span class="raml-console-sidebar-tooltip-flyout">
-                      <span marked="param.definitions[0].description"></span>
-                    </span>
-                  </span>
-                  <label for="{{param.definitions[0].id}}" class="raml-console-sidebar-label">{{param.definitions[0].displayName}} <span class="raml-console-side-bar-required-field" ng-if="param.definitions[0].required">*</span></label>
-
-                  <span class="raml-console-sidebar-input-tooltip-container raml-console-sidebar-input-left" ng-if="hasExampleValue(param.definitions[0].example)">
-                    <button tabindex="-1" class="raml-console-sidebar-input-reset" ng-click="resetFormParameter(param.definitions[0])"><span class="raml-console-visuallyhidden">Reset field</span></button>
-                    <span class="raml-console-sidebar-tooltip-flyout-left">
-                      <span>Use example value</span>
+                      <span marked="param.definitions[0].description" opts="markedOptions"></span>
                     </span>
                   </span>
 
-                  <input class="raml-console-sidebar-input" ng-model="context.bodyContent.definitions[context.bodyContent.selected].values[param.definitions[0].id][0]" ng-class="{'raml-console-sidebar-field-no-default': !hasExampleValue(param.definitions[0].example)}" validate="param.definitions[0]" dynamic-name="param.definitions[0].id" />
-                  <span class="raml-console-field-validation-error"></span>
+                  <raml-field param="param.definitions[0]" model="context.bodyContent.definitions[context.bodyContent.selected].values[param.definitions[0].id]"></raml-field>
                 </p>
               </div>
             </div>
@@ -94,11 +85,9 @@
               <div class="raml-console-sidebar-action-group">
                 <button ng-hide="showSpinner" type="submit" class="raml-console-sidebar-action raml-console-sidebar-action-{{methodInfo.method}}" ng-click="tryIt($event)" ng-class="{'raml-console-sidebar-action-force':context.forceRequest}"><span ng-if="context.forceRequest">Force</span> {{methodInfo.method.toUpperCase()}}
                 </button>
-                <button ng-if="showSpinner" type="submit" class="raml-console-sidebar-action raml-console-sidebar-action-{{methodInfo.method}} raml-console-sidebar-action-cancel-request" ng-click="cancelRequest()">Cancel</button>
+                <button ng-if="showSpinner" type="submit" class="raml-console-sidebar-action raml-console-sidebar-action-{{methodInfo.method}} raml-console-sidebar-action-cancel-request" ng-click="cancelRequest()">Cancel <div class="raml-console-spinner-request" ng-if="showSpinner">Loading ...</div></button>
                 <button class="raml-console-sidebar-action raml-console-sidebar-action-clear" ng-click="clearFields()">Clear</button>
                 <button class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="resetFields()">Reset</button>
-
-                <div class="raml-console-spinner-request" ng-if="showSpinner">Loading ...</div>
               </div>
             </div>
           </section>
@@ -162,7 +151,7 @@
                 <h3 class="raml-console-sidebar-response-head">Status</h3>
                 <p class="raml-console-sidebar-response-item">{{response.status}}</p>
 
-                <h3 class="raml-console-sidebar-response-head">Headers</h3>
+                <h3 class="raml-console-sidebar-response-head" ng-if="response.headers">Headers</h3>
                 <div class="raml-console-sidebar-response-item">
                   <p class="raml-console-sidebar-response-metadata" ng-repeat="(key, value) in response.headers">
                     <b>{{key}}:</b> <br>{{value}}

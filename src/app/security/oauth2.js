@@ -15,6 +15,10 @@
           return $scope.credentials.grant === 'owner';
         };
 
+        $scope.isImplicitEnabled = function () {
+          return $scope.credentials.grant === 'token';
+        };
+
         $scope.grants = [
           {
             label: 'Implicit',
@@ -36,6 +40,9 @@
 
         /* jshint camelcase: false */
         var authorizationGrants = $scope.$parent.securitySchemes.oauth_2_0.settings.authorizationGrants;
+
+        $scope.scopes = $scope.$parent.securitySchemes.oauth_2_0.settings.scopes;
+        $scope.credentials.scopes = {};
 
         if (authorizationGrants) {
           $scope.grants = $scope.grants.filter(function (el) {

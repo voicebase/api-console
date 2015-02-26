@@ -7,7 +7,9 @@
       templateUrl: 'directives/sidebar.tpl.html',
       replace: true,
       controller: function ($scope, $location, $anchorScroll) {
+        $scope.markedOptions = RAML.Settings.marked;
         $scope.currentSchemeType = 'Anonymous';
+        $scope.currentScheme = 'Anonymous|anonymous';
         $scope.responseDetails = false;
 
         function completeAnimation (element) {
@@ -54,21 +56,24 @@
           return body;
         }
 
-        function handleResponse(jqXhr) {
-          $scope.response.status  = jqXhr.status;
-          $scope.response.headers = parseHeaders(jqXhr.getAllResponseHeaders());
+        function handleResponse(jqXhr, err) {
+          $scope.response.status = jqXhr ? jqXhr.status : err ? err.status : 0;
 
-          $scope.currentStatusCode = jqXhr.status.toString();
+          if (jqXhr) {
+            $scope.response.headers = parseHeaders(jqXhr.getAllResponseHeaders());
 
-          if ($scope.response.headers['content-type']) {
-            $scope.response.contentType = $scope.response.headers['content-type'].split(';')[0];
-          }
+            if ($scope.response.headers['content-type']) {
+              $scope.response.contentType = $scope.response.headers['content-type'].split(';')[0];
+            }
 
-          try {
-            $scope.response.body = beautify(jqXhr.responseText, $scope.response.contentType);
-          }
-          catch (e) {
-            $scope.response.body = jqXhr.responseText;
+            $scope.currentStatusCode = jqXhr.status.toString();
+
+            try {
+              $scope.response.body = beautify(jqXhr.responseText, $scope.response.contentType);
+            }
+            catch (e) {
+              $scope.response.body = jqXhr.responseText;
+            }
           }
 
           $scope.requestEnd      = true;
@@ -83,7 +88,7 @@
           // If the response fails because of CORS, responseText is null
           var editorHeight = 50;
 
-          if (jqXhr.responseText) {
+          if (jqXhr && jqXhr.responseText) {
             var lines = $scope.response.body.split('\n').length;
             editorHeight = lines > 100 ? 2000 : 25*lines;
           }
@@ -167,6 +172,10 @@
             }
           });
         }
+
+        $scope.$on('resetData', function() {
+          $scope.currentSchemeType = 'Anonymous';
+        });
 
         $scope.cancelRequest = function () {
           $scope.showSpinner = false;
@@ -260,9 +269,69 @@
 
         $scope.context.forceRequest = false;
 
+        function cleanSchemeMetadata(collection, context) {
+          Object.keys(collection).map(function (key) {
+            if (collection[key][0].isFromSecurityScheme) {
+              delete collection[key];
+            }
+
+            if (context.plain[key].definitions[0].isFromSecurityScheme) {
+              delete context.plain[key];
+            }
+          });
+        }
+
+        function updateContextData (type, scheme, collection, context) {
+          var details         = $scope.securitySchemes[scheme].describedBy || {};
+          var securityHeaders = details[type] || {};
+
+          if (securityHeaders) {
+            Object.keys(securityHeaders).map(function (key) {
+              if (!securityHeaders[key]) {
+                securityHeaders[key] = {
+                  id: key,
+                  type: 'string'
+                };
+              }
+
+              securityHeaders[key].displayName             = key;
+              securityHeaders[key].isFromSecurityScheme    = true;
+              collection[key] = [securityHeaders[key]];
+
+              context.plain[key] = {
+                definitions: [securityHeaders[key]],
+                selected: securityHeaders[key].type
+              };
+              context.values[key] = [undefined];
+            });
+          }
+        }
+
+        $scope.securitySchemeChanged = function (scheme) {
+          var info            = scheme.split('|');
+          var type            = info[0];
+          var name            = info[1];
+
+          $scope.currentSchemeType = type;
+
+          cleanSchemeMetadata($scope.methodInfo.headers.plain, $scope.context.headers);
+          cleanSchemeMetadata($scope.methodInfo.queryParameters, $scope.context.queryParameters);
+
+          if (type === 'x-custom') {
+            if (!$scope.methodInfo.headers.plain) {
+              $scope.methodInfo.headers.plain = {};
+            }
+
+            updateContextData('headers', name, $scope.methodInfo.headers.plain, $scope.context.headers);
+            updateContextData('queryParameters', name, $scope.methodInfo.queryParameters, $scope.context.queryParameters);
+          }
+        };
+
         $scope.tryIt = function ($event) {
           $scope.requestOptions  = null;
           $scope.responseDetails = false;
+          $scope.response        = {};
+
           validateForm($scope.form);
 
           if (!$scope.context.forceRequest) {
@@ -275,7 +344,6 @@
             var segmentContexts = resolveSegementContexts($scope.resource.pathSegments, $scope.context.uriParameters.data());
 
             $scope.showSpinner = true;
-            // $scope.toggleSidebar($event, true);
             $scope.toggleRequestMetadata($event, true);
 
             try {
@@ -324,9 +392,9 @@
               //// TODO: Make a uniform interface
               if (scheme && scheme.type === 'OAuth 2.0') {
                 authStrategy = new RAML.Client.AuthStrategies.Oauth2(scheme, $scope.credentials);
-                authStrategy.authenticate(request.toOptions(), function (jqXhr) {
+                authStrategy.authenticate(request.toOptions(), function (jqXhr, err) {
                   $scope.requestOptions = request.toOptions();
-                  handleResponse(jqXhr);
+                  handleResponse(jqXhr, err);
                 });
                 return;
               }
@@ -423,7 +491,9 @@
               duration: speed,
               complete: function (element) {
                 jQuery(element).removeAttr('style');
-                $scope.documentationEnabled = false;
+                if ($scope.singleView) {
+                  $scope.documentationEnabled = false;
+                }
                 apply();
               }
             }

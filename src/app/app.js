@@ -26,28 +26,38 @@
     });
   });
 
-  var renderer = new window.marked.Renderer();
-  var loc      = window.location;
-  var uri      = loc.protocol + '//' + loc.host + loc.pathname.replace(/\/$/, '');
+  var loc = window.location;
+  var uri = loc.protocol + '//' + loc.host + loc.pathname.replace(/\/$/, '');
 
-  // Marked Settings
-  renderer.paragraph = function (text) {
-    return text;
-  };
-
-  window.marked.setOptions({
-    renderer: renderer,
-    gfm: true,
-    tables: true,
-    breaks: false,
-    pedantic: false,
-    sanitize: true,
-    smartLists: true,
-    smartypants: false
+  window.hljs.configure({
+    classPrefix: 'raml-console-hljs-'
   });
 
   // Settings
   RAML.Settings.proxy             = RAML.Settings.proxy || false;
   RAML.Settings.oauth2RedirectUri = RAML.Settings.oauth2RedirectUri || uri + '/authentication/oauth2.html';
   RAML.Settings.oauth1RedirectUri = RAML.Settings.oauth1RedirectUri || uri + '/authentication/oauth1.html';
+  RAML.Settings.marked            = {
+    gfm: true,
+    tables: true,
+    breaks: true,
+    pedantic: false,
+    sanitize: false,
+    smartLists: true,
+    silent: false,
+    langPrefix: 'lang-',
+    smartypants: false,
+    headerPrefix: '',
+    renderer: new window.marked.Renderer(),
+    xhtml: false,
+    highlight: function (code, lang) {
+      var result = [
+        '<pre class="raml-console-resource-pre raml-console-hljs hljs">',
+        lang ? window.hljs.highlightAuto(code).value : code,
+        '</pre>'
+      ];
+
+      return result.join('');
+    }
+  };
 })(window);

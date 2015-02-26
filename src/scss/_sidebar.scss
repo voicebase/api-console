@@ -1,6 +1,7 @@
 .sidebar {
   width: 0;
   flex-shrink: 0;
+  -webkit-flex-shrink: 0;
 
   overflow: hidden;
   border-bottom-right-radius: 4px;
@@ -723,6 +724,15 @@
   font-weight: 700;
 }
 
+.sidebar-security-label {
+  display: inline;
+  float: right;
+  font-size: 11px;
+  font-weight: normal;
+  margin-right: 5px;
+  margin-top: 9px;
+}
+
 .sidebar-input {
   display: block;
   width: 100%;
@@ -1143,4 +1153,11 @@
 .sidebar-force-message {
   font-size: 13px;
   color: red;
+}
+
+.sidebar-oauth-scopes {
+  list-style-type: none;
+  padding-left: 0;
+  font-size: 14px;
+  margin-top: -10px !important;
 }
