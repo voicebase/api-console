@@ -13,22 +13,20 @@
         return currentToken;
     };
 
-    var getTokens = function(credentials, parameters) {
+    var getTokens = function(url, credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
-      var apis = parameters.apis[0];
-      var version = parameters.version[0];
 
       jQuery.ajax({
-        url: 'https://' + apis + '.voicebase.com/' + version + '/access/users/' + username + '/tokens',
+        url: url + '/access/users/+' + username.toLowerCase() + '/tokens',
         type: 'GET',
         dataType: 'json',
-        beforeSend: function(xhr) {
-          xhr.setRequestHeader('Authorization', 'Basic ' + btoa(username + ':' + password));
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
-        success: function(tokens){
+        success: function(tokens) {
           deferred.resolve(tokens);
         },
         error: function(jqXHR, textStatus, errorThrown){

@@ -17,7 +17,8 @@
       case 'x-custom':
         return RAML.Client.AuthStrategies.anonymous();
       default:
-        throw new Error('Unknown authentication strategy: ' + scheme.type);
+        //throw new Error('Unknown authentication strategy: ' + scheme.type);
+        return RAML.Client.AuthStrategies.anonymous();
       }
     }
   };

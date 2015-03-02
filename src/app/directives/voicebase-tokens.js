@@ -21,17 +21,18 @@
           if(res.length > 0) {
             $scope.resource = angular.copy(res[0]);
             delete $scope.resource.uriParametersForDocumentation.userId;
-          }
 
-          $scope.methodInfo = $scope.resource.methods[0];
-          $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
-          toUIModel($scope.resource.uriParametersForDocumentation);
+            $scope.methodInfo = $scope.resource.methods[0];
+            $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
+            toUIModel($scope.resource.uriParametersForDocumentation);
+          }
         };
         getResource();
 
         $scope.isLoaded = false;
         $scope.tokens = [];
         $scope.tokenError = '';
+        $scope.selectedToken = null;
 
         $scope.showForm = function() {
           $scope.tokenError = '';
@@ -50,14 +51,35 @@
           else {
             $scope.isLoaded = true;
             $scope.hideForm();
-            voicebaseTokensApi.getTokens($scope.credentials, $scope.context.uriParameters.values).then(function(tokens){
+            var client = RAML.Client.create($scope.raml);
+            voicebaseTokensApi.getTokens(client.baseUri, $scope.credentials).then(function(tokensData){
               $scope.isLoaded = false;
-              $scope.tokens = tokens;
+              $scope.tokens = tokensData.tokens;
+              if($scope.tokens.length > 0) {
+                $scope.selectedToken = $scope.tokens[0];
+                $scope.setAuthHeaderForAjax();
+              }
             }, function(error){
               $scope.isLoaded = false;
               $scope.tokenError = error;
             });
           }
+        };
+
+        $scope.setAuthHeaderForAjax = function() {
+          var tokenObj = $scope.selectedToken;
+          var tokenText = (tokenObj) ? tokenObj.token : null;
+          if(tokenText && tokenObj.type === 'Bearer') {
+            jQuery.ajaxSetup({
+              beforeSend: function(xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
+              }
+            });
+          }
+        };
+
+        $scope.tokenChange = function() {
+            $scope.setAuthHeaderForAjax();
         };
 
         $scope.hideError = function(){
