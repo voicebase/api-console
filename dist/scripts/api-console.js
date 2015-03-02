@@ -1323,7 +1323,8 @@
               authStrategy.authenticate().then(function(token) {
                 token.sign(request);
                 $scope.requestOptions = request.toOptions();
-                jQuery.ajax(request.toOptions()).then(
+                $scope.requestOptions.scheme = $scope.currentSchemeType;
+                jQuery.ajax($scope.requestOptions).then(
                   function(data, textStatus, jqXhr) { handleResponse(jqXhr); },
                   function(jqXhr) { handleResponse(jqXhr); }
                 );
@@ -1666,11 +1667,14 @@
 
         $scope.setAuthHeaderForAjax = function() {
           var tokenObj = $scope.selectedToken;
+          voicebaseTokensApi.setCurrentToken(tokenObj);
           var tokenText = (tokenObj) ? tokenObj.token : null;
           if(tokenText && tokenObj.type === 'Bearer') {
             jQuery.ajaxSetup({
-              beforeSend: function(xhr) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
+              beforeSend: function(xhr, settings) {
+                if(settings.url.indexOf('voicebase') !== -1 && settings.scheme.indexOf('OAuth') !== -1) {
+                  xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
+                }
               }
             });
           }
@@ -1692,12 +1696,6 @@
           }
         }
 
-      },
-      link: function (scope, element) {
-        jQuery(element).find('.raml-console-dropdown').change(function(){
-          var tokenId = jQuery(this).find('option:selected').val();
-          voicebaseTokensApi.setCurrentToken(tokenId);
-        });
       }
     };
   };
@@ -2085,8 +2083,8 @@
     var tokens = [];
     var currentToken = '';
 
-    var setCurrentToken = function(tokenId){
-        currentToken = tokens[tokenId];
+    var setCurrentToken = function(_currentToken){
+        currentToken = _currentToken;
     };
 
     var getCurrentToken = function(){
@@ -2106,8 +2104,9 @@
         headers: {
           'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
-        success: function(tokens) {
-          deferred.resolve(tokens);
+        success: function(_tokens) {
+          tokens = _tokens;
+          deferred.resolve(_tokens);
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);

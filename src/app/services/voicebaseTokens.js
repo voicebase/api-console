@@ -5,8 +5,8 @@
     var tokens = [];
     var currentToken = '';
 
-    var setCurrentToken = function(tokenId){
-        currentToken = tokens[tokenId];
+    var setCurrentToken = function(_currentToken){
+        currentToken = _currentToken;
     };
 
     var getCurrentToken = function(){
@@ -26,8 +26,9 @@
         headers: {
           'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
-        success: function(tokens) {
-          deferred.resolve(tokens);
+        success: function(_tokens) {
+          tokens = _tokens;
+          deferred.resolve(_tokens);
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);

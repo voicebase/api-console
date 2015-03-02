@@ -68,11 +68,14 @@
 
         $scope.setAuthHeaderForAjax = function() {
           var tokenObj = $scope.selectedToken;
+          voicebaseTokensApi.setCurrentToken(tokenObj);
           var tokenText = (tokenObj) ? tokenObj.token : null;
           if(tokenText && tokenObj.type === 'Bearer') {
             jQuery.ajaxSetup({
-              beforeSend: function(xhr) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
+              beforeSend: function(xhr, settings) {
+                if(settings.url.indexOf('voicebase') !== -1 && settings.scheme.indexOf('OAuth') !== -1) {
+                  xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
+                }
               }
             });
           }
@@ -94,12 +97,6 @@
           }
         }
 
-      },
-      link: function (scope, element) {
-        jQuery(element).find('.raml-console-dropdown').change(function(){
-          var tokenId = jQuery(this).find('option:selected').val();
-          voicebaseTokensApi.setCurrentToken(tokenId);
-        });
       }
     };
   };

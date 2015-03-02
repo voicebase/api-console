@@ -403,7 +403,8 @@
               authStrategy.authenticate().then(function(token) {
                 token.sign(request);
                 $scope.requestOptions = request.toOptions();
-                jQuery.ajax(request.toOptions()).then(
+                $scope.requestOptions.scheme = $scope.currentSchemeType;
+                jQuery.ajax($scope.requestOptions).then(
                   function(data, textStatus, jqXhr) { handleResponse(jqXhr); },
                   function(jqXhr) { handleResponse(jqXhr); }
                 );
