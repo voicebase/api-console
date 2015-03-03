@@ -1,12 +1,12 @@
 (function () {
   'use strict';
 
-  RAML.Directives.voicebaseTokens = function(formValidate, voicebaseTokensApi) {
+  RAML.Directives.voicebaseTokens = function() {
     return {
       restrict: 'E',
       templateUrl: 'directives/voicebase-tokens.tpl.html',
       replace: true,
-      controller: function($scope) {
+      controller: function($scope, formValidate, voicebaseTokensApi) {
         $scope.context = {
           forceRequest: false // see basic auth change event
         };
@@ -52,17 +52,19 @@
             $scope.isLoaded = true;
             $scope.hideForm();
             var client = RAML.Client.create($scope.raml);
-            voicebaseTokensApi.getTokens(client.baseUri, $scope.credentials).then(function(tokensData){
-              $scope.isLoaded = false;
-              $scope.tokens = tokensData.tokens;
-              if($scope.tokens.length > 0) {
-                $scope.selectedToken = $scope.tokens[0];
-                $scope.setAuthHeaderForAjax();
-              }
-            }, function(error){
+            voicebaseTokensApi.getTokens(client.baseUri, $scope.credentials).then(initTokens, function(error){
               $scope.isLoaded = false;
               $scope.tokenError = error;
             });
+          }
+        };
+
+        var initTokens = function(tokensData) {
+          $scope.isLoaded = false;
+          $scope.tokens = tokensData.tokens;
+          if($scope.tokens.length > 0) {
+            $scope.selectedToken = $scope.tokens[0];
+            $scope.setAuthHeaderForAjax();
           }
         };
 
@@ -97,6 +99,33 @@
           }
         }
 
+        var getTokenFromLocation = function() {
+          var params = getParametersFromLocation();
+          if(params.access_token) {
+            initTokens({
+              tokens: [{
+                token: params.access_token,
+                type: 'Bearer'
+              }]
+            });
+          }
+        };
+
+        var getParametersFromLocation = function() {
+          var urlSearch = location.search.substr(1);
+          var params = urlSearch.split('&');
+          var values = {};
+          for (var i = 0; i < params.length; i++) {
+            var param = params[i];
+            if(param && param !== '') {
+              var pair = param.split('=');
+              values[pair[0]] = pair[1];
+            }
+          }
+          return values;
+        };
+
+        getTokenFromLocation();
       }
     };
   };
