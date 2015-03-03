@@ -4,14 +4,12 @@
   RAML.Directives.voicebaseTokens = function() {
     return {
       restrict: 'E',
-      templateUrl: 'directives/voicebase-tokens.tpl.html',
+      templateUrl: 'voicebase/directives/voicebase-tokens.tpl.html',
       replace: true,
       controller: function($scope, formValidate, voicebaseTokensApi) {
         $scope.context = {
           forceRequest: false // see basic auth change event
         };
-        $scope.credentials = {};
-        $scope.showAuthForm = false;
 
         var getResource = function() {
           $scope.resource = null;
@@ -31,32 +29,15 @@
 
         $scope.isLoaded = false;
         $scope.tokens = [];
-        $scope.tokenError = '';
         $scope.selectedToken = null;
 
-        $scope.showForm = function() {
-          $scope.tokenError = '';
-          $scope.showAuthForm = !$scope.showAuthForm;
-        };
-
-        $scope.hideForm = function() {
-          $scope.showAuthForm = false;
-        };
-
-        $scope.auth = function($event) {
-          var isValid = formValidate.validateForm($scope.form);
-          if(!isValid) {
-              jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
-          }
-          else {
-            $scope.isLoaded = true;
-            $scope.hideForm();
-            var client = RAML.Client.create($scope.raml);
-            voicebaseTokensApi.getTokens(client.baseUri, $scope.credentials).then(initTokens, function(error){
-              $scope.isLoaded = false;
-              $scope.tokenError = error;
-            });
-          }
+        $scope.auth = function(credentials) {
+          $scope.isLoaded = true;
+          var client = RAML.Client.create($scope.raml);
+          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(initTokens, function(error){
+            $scope.isLoaded = false;
+            $scope.formError = error;
+          });
         };
 
         var initTokens = function(tokensData) {
@@ -85,10 +66,6 @@
 
         $scope.tokenChange = function() {
             $scope.setAuthHeaderForAjax();
-        };
-
-        $scope.hideError = function(){
-          $scope.tokenError = '';
         };
 
         function toUIModel (collection) {

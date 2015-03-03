@@ -1,0 +1,14 @@
+<div class="raml-console-vbs-tokens-container">
+  <button type="button" ng-click="showForm()" class="raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get" ng-show="!tokens.length">
+    <span ng-show="!isLoaded">Get tokens</span>
+    <span ng-show="isLoaded">Getting...</span>
+  </button>
+
+  <div ng-show="tokens.length > 0" class="raml-console-vbs-tokens-dropdown-container">
+    <span class="raml-console-dropdown-label">Tokens: </span>
+    <select class="raml-console-sidebar-input raml-console-dropdown" ng-model="selectedToken" ng-options="tokenObj as tokenObj.token for tokenObj in tokens" ng-change="tokenChange()">
+    </select>
+  </div>
+
+  <voicebase-auth-form auth="auth" context="context"></voicebase-auth-form>
+</div>
