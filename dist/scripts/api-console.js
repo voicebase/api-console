@@ -1601,113 +1601,6 @@
 (function () {
   'use strict';
 
-  RAML.Directives.voicebaseTokens = function(formValidate, voicebaseTokensApi) {
-    return {
-      restrict: 'E',
-      templateUrl: 'directives/voicebase-tokens.tpl.html',
-      replace: true,
-      controller: function($scope) {
-        $scope.context = {
-          forceRequest: false // see basic auth change event
-        };
-        $scope.credentials = {};
-        $scope.showAuthForm = false;
-
-        var getResource = function() {
-          $scope.resource = null;
-          var res = $scope.raml.resources.filter(function(resource) {
-            return resource.toString() === '/access/users/{userId}/tokens';
-          });
-          if(res.length > 0) {
-            $scope.resource = angular.copy(res[0]);
-            delete $scope.resource.uriParametersForDocumentation.userId;
-
-            $scope.methodInfo = $scope.resource.methods[0];
-            $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
-            toUIModel($scope.resource.uriParametersForDocumentation);
-          }
-        };
-        getResource();
-
-        $scope.isLoaded = false;
-        $scope.tokens = [];
-        $scope.tokenError = '';
-        $scope.selectedToken = null;
-
-        $scope.showForm = function() {
-          $scope.tokenError = '';
-          $scope.showAuthForm = !$scope.showAuthForm;
-        };
-
-        $scope.hideForm = function() {
-          $scope.showAuthForm = false;
-        };
-
-        $scope.auth = function($event) {
-          var isValid = formValidate.validateForm($scope.form);
-          if(!isValid) {
-              jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
-          }
-          else {
-            $scope.isLoaded = true;
-            $scope.hideForm();
-            var client = RAML.Client.create($scope.raml);
-            voicebaseTokensApi.getTokens(client.baseUri, $scope.credentials).then(function(tokensData){
-              $scope.isLoaded = false;
-              $scope.tokens = tokensData.tokens;
-              if($scope.tokens.length > 0) {
-                $scope.selectedToken = $scope.tokens[0];
-                $scope.setAuthHeaderForAjax();
-              }
-            }, function(error){
-              $scope.isLoaded = false;
-              $scope.tokenError = error;
-            });
-          }
-        };
-
-        $scope.setAuthHeaderForAjax = function() {
-          var tokenObj = $scope.selectedToken;
-          voicebaseTokensApi.setCurrentToken(tokenObj);
-          var tokenText = (tokenObj) ? tokenObj.token : null;
-          if(tokenText && tokenObj.type === 'Bearer') {
-            jQuery.ajaxSetup({
-              beforeSend: function(xhr, settings) {
-                if(settings.url.indexOf('voicebase') !== -1 && settings.scheme.indexOf('OAuth') !== -1) {
-                  xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
-                }
-              }
-            });
-          }
-        };
-
-        $scope.tokenChange = function() {
-            $scope.setAuthHeaderForAjax();
-        };
-
-        $scope.hideError = function(){
-          $scope.tokenError = '';
-        };
-
-        function toUIModel (collection) {
-          if(collection) {
-            Object.keys(collection).map(function (key) {
-              collection[key][0].id = key;
-            });
-          }
-        }
-
-      }
-    };
-  };
-
-  angular.module('RAML.Directives')
-    .directive('voicebaseTokens', RAML.Directives.voicebaseTokens);
-})();
-
-(function () {
-  'use strict';
-
   angular.module('raml', [])
     .factory('ramlParser', function () {
       return RAML.Parser;
@@ -2128,6 +2021,298 @@
 
   angular.module('RAML.Services')
     .service('voicebaseTokensApi', RAML.Services.VoicebaseTokensApi);
+
+})();
+
+RAML.Decorators = (function (Decorators) {
+  'use strict';
+
+  Decorators.ramlConsole = function ($provide) {
+    $provide.decorator('ramlConsoleDirective', function ($delegate, $controller, $timeout, $compile) {
+      var directive = $delegate[0];
+
+      var controllerOrigin = directive.controller; // save original controller
+      directive.controller = function ($scope, $window, $attrs) {
+        angular.extend(this, $controller(controllerOrigin, {$scope: $scope, $window: $window, $attrs: $attrs})); //extend orginal controller
+        $scope.$watch('loaded', function () {
+          if ($scope.loaded) {
+            $timeout(function () {
+              var el = $compile('<voicebase-sign></voicebase-sign>')($scope);
+              jQuery('#raml-console-documentation-container').before(el);
+            }, 0);
+          }
+        });
+      };
+
+      return $delegate;
+    });
+
+  };
+
+  return Decorators;
+
+})(RAML.Decorators || {});
+
+RAML.Decorators = (function (Decorators) {
+  'use strict';
+
+  Decorators.ramlField = function ($provide) {
+
+    $provide.decorator('ramlFieldDirective', function ($delegate, $controller) {
+      var directive = $delegate[0];
+
+      directive.templateUrl = 'voicebase/directives/voicebase-raml-field.tpl.html'; // replce template
+
+      var controllerOrigin = directive.controller; // save original controller
+      directive.controller = function ($scope) {
+        angular.extend(this, $controller(controllerOrigin, {$scope: $scope})); //extend orginal controller
+        var bodyContent = $scope.$parent.context.bodyContent;
+        var context = $scope.$parent.context[$scope.$parent.type];
+        if (bodyContent) {
+          context = context || bodyContent.definitions[bodyContent.selected];
+        }
+
+        $scope.parameter = context.plain[$scope.param.id];
+
+        $scope.isFile = function (definition) {
+          return definition.type === 'file';
+        };
+
+        $scope.isDefault = function (definition) {
+          return typeof definition.enum === 'undefined' && definition.type !== 'boolean' && !$scope.isFile(definition);
+        };
+
+      };
+
+      return $delegate;
+    });
+
+  };
+
+  return Decorators;
+
+})(RAML.Decorators || {});
+
+(function () {
+  'use strict';
+
+  angular.module('RAML.Directives').directive('validInputFile', function () {
+    return {
+      require: 'ngModel',
+      link: function (scope, el, attrs, ngModel) {
+        el.bind('change', function () {
+          scope.$apply(function () {
+            ngModel.$setViewValue(el.val());
+            ngModel.$render();
+          });
+
+          scope.$watch(function() {
+              return ngModel.$modelValue;
+          }, function (modelValue) {
+            if (!modelValue) {
+              el.val('');
+            }
+          });
+        });
+      }
+    };
+  });
+})();
+
+(function () {
+  'use strict';
+
+  RAML.Directives.voicebaseAuthForm = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase/directives/voicebase-auth-form.tpl.html',
+      controller: function($scope, formValidate) {
+        $scope.credentials = {};
+        $scope.showAuthForm = false;
+        $scope.formError = '';
+
+        $scope.showForm = function() {
+          $scope.formError = '';
+          $scope.showAuthForm = !$scope.showAuthForm;
+        };
+
+        $scope.hideForm = function() {
+          $scope.showAuthForm = false;
+        };
+
+        $scope.hideError = function(){
+          $scope.formError = '';
+        };
+
+        $scope.startAuth = function($event) {
+          var isValid = formValidate.validateForm($scope.form);
+          if(!isValid) {
+            jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
+          }
+          else {
+            $scope.hideForm();
+            $scope.auth($scope.credentials);
+          }
+
+        };
+
+      }
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('voicebaseAuthForm', RAML.Directives.voicebaseAuthForm);
+
+})();
+
+(function () {
+  'use strict';
+
+  RAML.Directives.voicebaseSign = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase/directives/voicebase-sign.tpl.html',
+      replace: true,
+      controller: function(/*$scope, formValidate, voicebaseTokensApi*/) {
+
+      }
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('voicebaseSign', RAML.Directives.voicebaseSign);
+
+})();
+
+(function () {
+  'use strict';
+
+  RAML.Directives.voicebaseTokens = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase/directives/voicebase-tokens.tpl.html',
+      replace: true,
+      controller: function($scope, formValidate, voicebaseTokensApi) {
+        $scope.context = {
+          forceRequest: false // see basic auth change event
+        };
+
+        var getResource = function() {
+          $scope.resource = null;
+          var res = $scope.raml.resources.filter(function(resource) {
+            return resource.toString() === '/access/users/{userId}/tokens';
+          });
+          if(res.length > 0) {
+            $scope.resource = angular.copy(res[0]);
+            delete $scope.resource.uriParametersForDocumentation.userId;
+
+            $scope.methodInfo = $scope.resource.methods[0];
+            $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
+            toUIModel($scope.resource.uriParametersForDocumentation);
+          }
+        };
+        getResource();
+
+        $scope.isLoaded = false;
+        $scope.tokens = [];
+        $scope.selectedToken = null;
+
+        $scope.auth = function(credentials) {
+          $scope.isLoaded = true;
+          var client = RAML.Client.create($scope.raml);
+          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(initTokens, function(error){
+            $scope.isLoaded = false;
+            $scope.formError = error;
+          });
+        };
+
+        var initTokens = function(tokensData) {
+          $scope.isLoaded = false;
+          $scope.tokens = tokensData.tokens;
+          if($scope.tokens.length > 0) {
+            $scope.selectedToken = $scope.tokens[0];
+            $scope.setAuthHeaderForAjax();
+          }
+        };
+
+        $scope.setAuthHeaderForAjax = function() {
+          var tokenObj = $scope.selectedToken;
+          voicebaseTokensApi.setCurrentToken(tokenObj);
+          var tokenText = (tokenObj) ? tokenObj.token : null;
+          if(tokenText && tokenObj.type === 'Bearer') {
+            jQuery.ajaxSetup({
+              beforeSend: function(xhr, settings) {
+                if(settings.url.indexOf('voicebase') !== -1 && settings.scheme.indexOf('OAuth') !== -1) {
+                  xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
+                }
+              }
+            });
+          }
+        };
+
+        $scope.tokenChange = function() {
+            $scope.setAuthHeaderForAjax();
+        };
+
+        function toUIModel (collection) {
+          if(collection) {
+            Object.keys(collection).map(function (key) {
+              collection[key][0].id = key;
+            });
+          }
+        }
+
+        var getTokenFromLocation = function() {
+          var params = getParametersFromLocation();
+          if(params.access_token) {
+            initTokens({
+              tokens: [{
+                token: params.access_token,
+                type: 'Bearer'
+              }]
+            });
+          }
+        };
+
+        var getParametersFromLocation = function() {
+          var urlSearch = location.search.substr(1);
+          var params = urlSearch.split('&');
+          var values = {};
+          for (var i = 0; i < params.length; i++) {
+            var param = params[i];
+            if(param && param !== '') {
+              var pair = param.split('=');
+              values[pair[0]] = pair[1];
+            }
+          }
+          return values;
+        };
+
+        getTokenFromLocation();
+      }
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('voicebaseTokens', RAML.Directives.voicebaseTokens);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp', [
+    'RAML.Directives',
+    'RAML.Services',
+    'RAML.Security',
+    'hc.marked',
+    'ui.codemirror',
+    'hljs',
+    'ramlConsoleApp'
+  ]).config(function ($provide) {
+    //RAML.Decorators.ramlConsole($provide);
+    RAML.Decorators.ramlField($provide);
+  });
+
 
 })();
 
@@ -5767,38 +5952,6 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   );
 
 
-  $templateCache.put('directives/voicebase-tokens.tpl.html',
-    "<div class=\"raml-console-vbs-tokens-container\">\n" +
-    "  <button type=\"button\" ng-click=\"showForm()\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\" ng-show=\"!tokens.length\">\n" +
-    "    <span ng-show=\"!isLoaded\">Get tokens</span>\n" +
-    "    <span ng-show=\"isLoaded\">Getting...</span>\n" +
-    "  </button>\n" +
-    "\n" +
-    "  <div ng-show=\"tokens.length > 0\" class=\"raml-console-vbs-tokens-dropdown-container\">\n" +
-    "    <span class=\"raml-console-dropdown-label\">Tokens: </span>\n" +
-    "    <select class=\"raml-console-sidebar-input raml-console-dropdown\" ng-model=\"selectedToken\" ng-options=\"tokenObj as tokenObj.token for tokenObj in tokens\" ng-change=\"tokenChange()\">\n" +
-    "    </select>\n" +
-    "  </div>\n" +
-    "\n" +
-    "  <div class=\"raml-console-token-auth-form\" ng-show=\"showAuthForm\">\n" +
-    "    <form name=\"form\" novalidate>\n" +
-    "      <basic-auth credentials='credentials'></basic-auth>\n" +
-    "      <named-parameters ng-if=\"resource.uriParametersForDocumentation\" src=\"resource.uriParametersForDocumentation\" context=\"context\" type=\"uriParameters\" title=\"URI Parameters\"></named-parameters>\n" +
-    "      <div class=\"raml-console-auth-form-btns\">\n" +
-    "        <button type=\"button\" ng-click=\"auth($event)\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\">Auth</button>\n" +
-    "        <button type=\"button\" ng-click=\"hideForm()\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-delete\">Cancel</button>\n" +
-    "      </div>\n" +
-    "    </form>\n" +
-    "  </div>\n" +
-    "\n" +
-    "  <div class=\"raml-console-tokens-error\" ng-show=\"tokenError\">\n" +
-    "    <span class=\"raml-console-close\" ng-click=\"hideError()\"><span>x</span></span>\n" +
-    "    {{ tokenError }}\n" +
-    "  </div>\n" +
-    "</div>\n"
-  );
-
-
   $templateCache.put('resources/resource-type.tpl.html',
     "<span ng-if=\"resource.resourceType\" class=\"raml-console-flag raml-console-resource-heading-flag\"><b>Type:</b> {{resource.resourceType}}</span>\n"
   );
@@ -5984,6 +6137,93 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      </li>\n" +
     "    </ol>\n" +
     "  </p>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('voicebase/directives/voicebase-auth-form.tpl.html',
+    "<div class=\"raml-console-auth-form-container\">\n" +
+    "  <div class=\"raml-console-token-auth-form\" ng-show=\"showAuthForm\">\n" +
+    "    <form name=\"form\" novalidate>\n" +
+    "      <basic-auth credentials='credentials'></basic-auth>\n" +
+    "      <div class=\"raml-console-auth-form-btns\">\n" +
+    "        <button type=\"button\" ng-click=\"startAuth($event)\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\">Auth</button>\n" +
+    "        <button type=\"button\" ng-click=\"hideForm()\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-delete\">Cancel</button>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div class=\"raml-console-tokens-error\" ng-show=\"formError\">\n" +
+    "    <span class=\"raml-console-close\" ng-click=\"hideError()\"><span>x</span></span>\n" +
+    "    {{ formError }}\n" +
+    "  </div>\n" +
+    "\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('voicebase/directives/voicebase-raml-field.tpl.html',
+    "<div>\n" +
+    "  <div ng-repeat=\"param in parameter.definitions\" ng-if=\"param.type === parameter.selected\">\n" +
+    "    <label for=\"{{param.id}}\" class=\"raml-console-sidebar-label\">{{param.displayName}}\n" +
+    "      <a class=\"raml-console-sidebar-override\" ng-if=\"canOverride(param)\" ng-click=\"overrideField($event, param)\">Override</a>\n" +
+    "      <span class=\"raml-console-side-bar-required-field\" ng-if=\"param.required\">*</span>\n" +
+    "      <label ng-if=\"param.isFromSecurityScheme\" class=\"raml-console-sidebar-security-label\">from security scheme</label>\n" +
+    "\n" +
+    "      <span class=\"raml-console-param-type\" ng-if=\"parameter.definitions.length > 1\">\n" +
+    "        as\n" +
+    "        <select class=\"form-control\" ng-model=\"parameter.selected\" ng-options=\"param.type as param.type for param in parameter.definitions\"></select>\n" +
+    "      </span>\n" +
+    "    </label>\n" +
+    "\n" +
+    "    <span class=\"raml-console-sidebar-input-tooltip-container raml-console-sidebar-input-left\" ng-if=\"hasExampleValue(param) && !isFile(param)\">\n" +
+    "      <button tabindex=\"-1\" class=\"raml-console-sidebar-input-reset\" ng-click=\"reset(param)\"><span class=\"raml-console-visuallyhidden\">Reset field</span></button>\n" +
+    "      <span class=\"raml-console-sidebar-tooltip-flyout-left\">\n" +
+    "        <span>Use example value</span>\n" +
+    "      </span>\n" +
+    "    </span>\n" +
+    "\n" +
+    "    <select id=\"select_{{param.id}}\" ng-if=\"isEnum(param)\" name=\"param.id\" class=\"raml-console-sidebar-input\" ng-model=\"model[0]\" style=\"margin-bottom: 0;\" ng-change=\"onChange()\">\n" +
+    "      <option ng-repeat=\"enum in unique(param.enum)\" value=\"{{enum}}\">{{enum}}</option>\n" +
+    "    </select>\n" +
+    "\n" +
+    "    <input id=\"{{param.id}}\" ng-if=\"isDefault(param)\" class=\"raml-console-sidebar-input\" ng-model=\"model[0]\" ng-class=\"{'raml-console-sidebar-field-no-default': !hasExampleValue(param)}\" validate=\"param\" dynamic-name=\"param.id\" ng-change=\"onChange()\"/>\n" +
+    "\n" +
+    "    <input id=\"checkbox_{{param.id}}\" ng-if=\"isBoolean(param)\" class=\"raml-console-sidebar-input\" type=\"checkbox\" ng-model=\"model[0]\" dynamic-name=\"param.id\" ng-change=\"onChange()\" />\n" +
+    "\n" +
+    "    <input type=\"file\" id=\"file_{{param.id}}\" ng-if=\"isFile(param)\" class=\"raml-console-sidebar-input-file\" ng-model=\"model[0]\" ng-required=\"param.required\" dynamic-name=\"param.id\" valid-input-file ng-change=\"onChange()\"/>\n" +
+    "\n" +
+    "    <span class=\"raml-console-field-validation-error\"></span>\n" +
+    "\n" +
+    "  </div>\n" +
+    "\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('voicebase/directives/voicebase-sign.tpl.html',
+    "<div class=\"raml-console-vbs-sign-container\">\n" +
+    "  <a class=\"raml-console-meta-button\">\n" +
+    "    Sign In\n" +
+    "  </a>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('voicebase/directives/voicebase-tokens.tpl.html',
+    "<div class=\"raml-console-vbs-tokens-container\">\n" +
+    "  <button type=\"button\" ng-click=\"showForm()\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\" ng-show=\"!tokens.length\">\n" +
+    "    <span ng-show=\"!isLoaded\">Get tokens</span>\n" +
+    "    <span ng-show=\"isLoaded\">Getting...</span>\n" +
+    "  </button>\n" +
+    "\n" +
+    "  <div ng-show=\"tokens.length > 0\" class=\"raml-console-vbs-tokens-dropdown-container\">\n" +
+    "    <span class=\"raml-console-dropdown-label\">Tokens: </span>\n" +
+    "    <select class=\"raml-console-sidebar-input raml-console-dropdown\" ng-model=\"selectedToken\" ng-options=\"tokenObj as tokenObj.token for tokenObj in tokens\" ng-change=\"tokenChange()\">\n" +
+    "    </select>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <voicebase-auth-form auth=\"auth\" context=\"context\"></voicebase-auth-form>\n" +
     "</div>\n"
   );
 
