@@ -8,12 +8,6 @@
       replace: true,
       controller: function($scope, resourceHelper, voicebaseTokensApi) {
 
-        $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');
-        if($scope.resource) {
-          $scope.methodInfo = $scope.resource.methods[0];
-          $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
-        }
-
         $scope.isLoaded = false;
         $scope.tokens = [];
         $scope.selectedToken = null;
@@ -21,18 +15,30 @@
         $scope.auth = function(credentials) {
           $scope.isLoaded = true;
           var client = RAML.Client.create($scope.raml);
-          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(initTokens, function(error){
+          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
+          }, function(error){
             $scope.isLoaded = false;
             $scope.formError = error;
           });
         };
 
+        $scope.$watch(function() {
+          return voicebaseTokensApi.getTokensObj();
+        }, function(tokensData) {
+            initTokens(tokensData);
+        });
+
         var initTokens = function(tokensData) {
           $scope.isLoaded = false;
-          $scope.tokens = tokensData.tokens;
-          if($scope.tokens.length > 0) {
-            $scope.selectedToken = $scope.tokens[0];
-            $scope.setAuthHeaderForAjax();
+          if(tokensData) {
+            $scope.tokens = tokensData.tokens;
+            if($scope.tokens && $scope.tokens.length > 0) {
+              $scope.selectedToken = $scope.tokens[0];
+              //$scope.setAuthHeaderForAjax();
+            }
+          }
+          else {
+            $scope.tokens = [];
           }
         };
 
@@ -51,7 +57,7 @@
         };
 
         $scope.tokenChange = function() {
-            $scope.setAuthHeaderForAjax();
+            //$scope.setAuthHeaderForAjax();
         };
 
         var getTokenFromLocation = function() {

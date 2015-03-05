@@ -24,7 +24,7 @@
         };
 
         $scope.startAuth = function($event) {
-          var isValid = formValidate.validateForm($scope.form);
+          var isValid = formValidate.validateForm($scope.authForm);
           if(!isValid) {
             jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
           }

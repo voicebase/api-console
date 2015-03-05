@@ -2,8 +2,8 @@
   'use strict';
 
   RAML.Services.VoicebaseTokensApi = function($http, $q) {
-    var tokens = [];
-    var currentToken = '';
+    var tokens = null;
+    var currentToken = null;
 
     var setCurrentToken = function(_currentToken){
         currentToken = _currentToken;
@@ -42,8 +42,21 @@
       return deferred.promise;
     };
 
+    var setTokensObj = function(tokensObj) {
+      if(!tokensObj) {
+        setCurrentToken(null);
+      }
+      tokens = tokensObj;
+    };
+
+    var getTokensObj = function() {
+        return tokens;
+    };
+
     return {
       getTokens: getTokens,
+      setTokensObj: setTokensObj,
+      getTokensObj: getTokensObj,
       getCurrentToken: getCurrentToken,
       setCurrentToken: setCurrentToken
     };

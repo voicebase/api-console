@@ -12,6 +12,7 @@
   ]).config(function ($provide) {
     RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlField($provide);
+    RAML.Decorators.ramlSidebar($provide);
   });
 
 

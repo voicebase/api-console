@@ -23,7 +23,7 @@
         };
 
         $scope.signOut = function() {
-            voicebaseTokensApi.setCurrentToken('');
+            voicebaseTokensApi.setTokensObj(null);
         };
 
         $scope.auth = function(credentials) {
