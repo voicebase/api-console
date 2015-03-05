@@ -6,26 +6,13 @@
       restrict: 'E',
       templateUrl: 'voicebase/directives/voicebase-tokens.tpl.html',
       replace: true,
-      controller: function($scope, formValidate, voicebaseTokensApi) {
-        $scope.context = {
-          forceRequest: false // see basic auth change event
-        };
+      controller: function($scope, resourceHelper, voicebaseTokensApi) {
 
-        var getResource = function() {
-          $scope.resource = null;
-          var res = $scope.raml.resources.filter(function(resource) {
-            return resource.toString() === '/access/users/{userId}/tokens';
-          });
-          if(res.length > 0) {
-            $scope.resource = angular.copy(res[0]);
-            delete $scope.resource.uriParametersForDocumentation.userId;
-
-            $scope.methodInfo = $scope.resource.methods[0];
-            $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
-            toUIModel($scope.resource.uriParametersForDocumentation);
-          }
-        };
-        getResource();
+        $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');
+        if($scope.resource) {
+          $scope.methodInfo = $scope.resource.methods[0];
+          $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
+        }
 
         $scope.isLoaded = false;
         $scope.tokens = [];
@@ -51,7 +38,6 @@
 
         $scope.setAuthHeaderForAjax = function() {
           var tokenObj = $scope.selectedToken;
-          voicebaseTokensApi.setCurrentToken(tokenObj);
           var tokenText = (tokenObj) ? tokenObj.token : null;
           if(tokenText && tokenObj.type === 'Bearer') {
             jQuery.ajaxSetup({
@@ -67,14 +53,6 @@
         $scope.tokenChange = function() {
             $scope.setAuthHeaderForAjax();
         };
-
-        function toUIModel (collection) {
-          if(collection) {
-            Object.keys(collection).map(function (key) {
-              collection[key][0].id = key;
-            });
-          }
-        }
 
         var getTokenFromLocation = function() {
           var params = getParametersFromLocation();

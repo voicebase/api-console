@@ -28,6 +28,9 @@
         },
         success: function(_tokens) {
           tokens = _tokens;
+          if(tokens.tokens.length > 0) {
+            setCurrentToken(tokens.tokens[0]);
+          }
           deferred.resolve(_tokens);
         },
         error: function(jqXHR, textStatus, errorThrown){

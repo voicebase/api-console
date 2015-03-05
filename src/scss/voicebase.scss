@@ -2,26 +2,6 @@
   position: absolute;
   right: 120px;
 
-  .get-tokens {
-  }
-
-  .token-auth-form, .tokens-error {
-    float: right;
-    background: #FFF;
-    z-index: 10;
-    position: absolute;
-    right: 0;
-    top: 50px;
-    width: 320px;
-    border: 1px solid #CCC;
-    box-shadow: 0 0 5px #CCC;
-
-    .auth-form-btns {
-      margin-top: -15px;
-      padding: 0 16px 16px;
-    }
-  }
-
   .vbs-tokens-dropdown-container{
     display: table;
 
@@ -38,24 +18,42 @@
     }
   }
 
-  .tokens-error {
-    padding: 15px;
-    color: #a94442;
-    background-color: #f2dede;
-    border-color: #ebccd1;
+}
 
-    .close {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      color: inherit;
-      cursor: pointer;
-      opacity: 0.5;
-      font-weight: bold;
+.token-auth-form, .tokens-error {
+  float: right;
+  background: #FFF;
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  top: 50px;
+  width: 320px;
+  border: 1px solid #CCC;
+  box-shadow: 0 0 5px #CCC;
 
-      &:hover {
-        opacity: 1;
-      }
+  .auth-form-btns {
+    margin-top: -15px;
+    padding: 0 16px 16px;
+  }
+}
+
+.tokens-error {
+  padding: 15px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+
+  .close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.5;
+    font-weight: bold;
+
+    &:hover {
+      opacity: 1;
     }
   }
 }
@@ -64,6 +62,10 @@
   position: absolute;
   top: 0;
   left: 0;
+
+  .token-auth-form, .tokens-error {
+    left: 5px;
+  }
 }
 
 .sidebar-input-file {
