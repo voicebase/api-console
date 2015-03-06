@@ -38,9 +38,9 @@
         };
 
         $scope.$watch(function() {
-          return voicebaseTokensApi.getCurrentToken();
-        }, function(currentToken) {
-          $scope.signed = !!currentToken;
+          return voicebaseTokensApi.getTokensObj();
+        }, function(tokensObj) {
+          $scope.signed = !!tokensObj;
         });
       }
     };

@@ -6,7 +6,7 @@
       restrict: 'E',
       templateUrl: 'voicebase/directives/voicebase-tokens.tpl.html',
       replace: true,
-      controller: function($scope, resourceHelper, voicebaseTokensApi) {
+      controller: function($scope, voicebaseTokensApi) {
 
         $scope.isLoaded = false;
         $scope.tokens = [];
@@ -28,36 +28,24 @@
             initTokens(tokensData);
         });
 
+        $scope.$watch(function() {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function(currentToken) {
+            $scope.selectedToken = currentToken;
+        });
+
         var initTokens = function(tokensData) {
           $scope.isLoaded = false;
           if(tokensData) {
             $scope.tokens = tokensData.tokens;
-            if($scope.tokens && $scope.tokens.length > 0) {
-              $scope.selectedToken = $scope.tokens[0];
-              //$scope.setAuthHeaderForAjax();
-            }
           }
           else {
             $scope.tokens = [];
           }
         };
 
-        $scope.setAuthHeaderForAjax = function() {
-          var tokenObj = $scope.selectedToken;
-          var tokenText = (tokenObj) ? tokenObj.token : null;
-          if(tokenText && tokenObj.type === 'Bearer') {
-            jQuery.ajaxSetup({
-              beforeSend: function(xhr, settings) {
-                if(settings.url.indexOf('voicebase') !== -1 && settings.scheme.indexOf('OAuth') !== -1) {
-                  xhr.setRequestHeader('Authorization', 'Bearer ' + tokenText);
-                }
-              }
-            });
-          }
-        };
-
-        $scope.tokenChange = function() {
-            //$scope.setAuthHeaderForAjax();
+        $scope.tokenChange = function(_selectedToken) {
+          voicebaseTokensApi.setCurrentToken(_selectedToken);
         };
 
         var getTokenFromLocation = function() {
