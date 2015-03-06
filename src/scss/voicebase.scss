@@ -15,13 +15,25 @@
   position: absolute;
   left: 0;
   top: 50px;
-  width: 320px;
+  width: 400px;
   border: 1px solid #CCC;
   box-shadow: 0 0 5px #CCC;
 
   .auth-form-btns {
     margin-top: -15px;
     padding: 0 16px 16px;
+    display: table;
+    width: 100%;
+
+    .sidebar-action-get {
+      width: 49%;
+      float: left;
+    }
+
+    .sidebar-action-reset {
+      width: 49%;
+      float: right;
+    }
   }
 }
 
