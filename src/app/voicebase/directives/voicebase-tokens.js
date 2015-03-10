@@ -48,33 +48,6 @@
           voicebaseTokensApi.setCurrentToken(_selectedToken);
         };
 
-        var getTokenFromLocation = function() {
-          var params = getParametersFromLocation();
-          if(params.access_token) {
-            initTokens({
-              tokens: [{
-                token: params.access_token,
-                type: 'Bearer'
-              }]
-            });
-          }
-        };
-
-        var getParametersFromLocation = function() {
-          var urlSearch = location.search.substr(1);
-          var params = urlSearch.split('&');
-          var values = {};
-          for (var i = 0; i < params.length; i++) {
-            var param = params[i];
-            if(param && param !== '') {
-              var pair = param.split('=');
-              values[pair[0]] = pair[1];
-            }
-          }
-          return values;
-        };
-
-        getTokenFromLocation();
       }
     };
   };

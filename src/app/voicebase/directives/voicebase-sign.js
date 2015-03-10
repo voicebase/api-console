@@ -42,6 +42,8 @@
         }, function(tokensObj) {
           $scope.signed = !!tokensObj;
         });
+
+        voicebaseTokensApi.getTokenFromLocation();
       }
     };
   };

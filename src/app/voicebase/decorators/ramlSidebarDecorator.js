@@ -39,7 +39,7 @@ RAML.Decorators = (function (Decorators) {
             }
             else {
               $scope.context.customParameters.headers = $scope.context.customParameters.headers.filter(function (header) {
-                return (header.name !== 'Authorization')
+                return (header.name !== 'Authorization');
               });
             }
           }

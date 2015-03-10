@@ -27,10 +27,7 @@
           'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
         success: function(_tokens) {
-          tokens = _tokens;
-          if(tokens.tokens.length > 0) {
-            setCurrentToken(tokens.tokens[0]);
-          }
+          setTokensObj(_tokens);
           deferred.resolve(_tokens);
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -46,6 +43,10 @@
       if(!tokensObj) {
         setCurrentToken(null);
       }
+      else if(tokensObj.tokens.length > 0) {
+        setCurrentToken(tokensObj.tokens[0]);
+      }
+
       tokens = tokensObj;
     };
 
@@ -53,12 +54,39 @@
         return tokens;
     };
 
+    var getTokenFromLocation = function() {
+      var params = getParametersFromLocation();
+      if(params.access_token) {
+        setTokensObj({
+          tokens: [{
+            token: params.access_token,
+            type: 'Bearer'
+          }]
+        });
+      }
+    };
+
+    var getParametersFromLocation = function() {
+      var urlSearch = location.search.substr(1);
+      var params = urlSearch.split('&');
+      var values = {};
+      for (var i = 0; i < params.length; i++) {
+        var param = params[i];
+        if(param && param !== '') {
+          var pair = param.split('=');
+          values[pair[0]] = pair[1];
+        }
+      }
+      return values;
+    };
+
     return {
       getTokens: getTokens,
       setTokensObj: setTokensObj,
       getTokensObj: getTokensObj,
       getCurrentToken: getCurrentToken,
-      setCurrentToken: setCurrentToken
+      setCurrentToken: setCurrentToken,
+      getTokenFromLocation: getTokenFromLocation
     };
 
   };
