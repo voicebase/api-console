@@ -6362,7 +6362,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('voicebase/directives/voicebase-auth-form.tpl.html',
     "<div class=\"raml-console-auth-form-container\">\n" +
-    "  <div class=\"raml-console-token-auth-form\" ng-show=\"showAuthForm\">\n" +
+    "  <div class=\"raml-console-vbs-token-auth-form\" ng-show=\"showAuthForm\">\n" +
     "    <ng-form name=\"authForm\" novalidate null-form>\n" +
     "      <div class=\"raml-console-sidebar-row\">\n" +
     "        <p class=\"raml-console-sidebar-input-container\">\n" +
@@ -6378,15 +6378,15 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </p>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"raml-console-auth-form-btns\">\n" +
+    "      <div class=\"raml-console-vbs-auth-form-btns\">\n" +
     "        <button type=\"button\" ng-click=\"startAuth($event)\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\">Sign In</button>\n" +
     "        <button type=\"button\" ng-click=\"hideForm()\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\">Cancel</button>\n" +
     "      </div>\n" +
     "    </ng-form>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div class=\"raml-console-tokens-error\" ng-show=\"formError\">\n" +
-    "    <span class=\"raml-console-close\" ng-click=\"hideError()\"><span>x</span></span>\n" +
+    "  <div class=\"raml-console-vbs-tokens-error\" ng-show=\"formError\">\n" +
+    "    <span class=\"raml-console-vbs-close\" ng-click=\"hideError()\"><span>x</span></span>\n" +
     "    {{ formError }}\n" +
     "  </div>\n" +
     "\n" +
@@ -6402,7 +6402,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <span class=\"raml-console-side-bar-required-field\" ng-if=\"param.required\">*</span>\n" +
     "      <label ng-if=\"param.isFromSecurityScheme\" class=\"raml-console-sidebar-security-label\">from security scheme</label>\n" +
     "\n" +
-    "      <span class=\"raml-console-param-type\" ng-if=\"parameter.definitions.length > 1\">\n" +
+    "      <span class=\"raml-console-vbs-param-type\" ng-if=\"parameter.definitions.length > 1\">\n" +
     "        as\n" +
     "        <select class=\"form-control\" ng-model=\"parameter.selected\" ng-options=\"param.type as param.type for param in parameter.definitions\"></select>\n" +
     "      </span>\n" +
@@ -6423,7 +6423,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "    <input id=\"checkbox_{{param.id}}\" ng-if=\"isBoolean(param)\" class=\"raml-console-sidebar-input\" type=\"checkbox\" ng-model=\"model[0]\" dynamic-name=\"param.id\" ng-change=\"onChange()\" />\n" +
     "\n" +
-    "    <input type=\"file\" id=\"file_{{param.id}}\" ng-if=\"isFile(param)\" class=\"raml-console-sidebar-input-file\" ng-model=\"model[0]\" ng-required=\"param.required\" dynamic-name=\"param.id\" valid-input-file ng-change=\"onChange()\"/>\n" +
+    "    <input type=\"file\" id=\"file_{{param.id}}\" ng-if=\"isFile(param)\" class=\"raml-console-vbs-sidebar-input-file\" ng-model=\"model[0]\" ng-required=\"param.required\" dynamic-name=\"param.id\" valid-input-file ng-change=\"onChange()\"/>\n" +
     "\n" +
     "    <span class=\"raml-console-field-validation-error\"></span>\n" +
     "\n" +
@@ -6450,7 +6450,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('voicebase/directives/voicebase-tokens.tpl.html',
     "<div class=\"raml-console-vbs-tokens-container\" ng-if=\"currentSchemeType === 'x-OAuth 2 Bearer'\">\n" +
-    "  <button type=\"button\" ng-click=\"showForm()\" class=\"raml-console-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\" ng-show=\"!tokens.length\">\n" +
+    "  <button type=\"button\" ng-click=\"showForm()\" class=\"raml-console-vbs-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\" ng-show=\"!tokens.length\">\n" +
     "    <span ng-show=\"!isLoaded\">Sign in to select token</span>\n" +
     "    <span ng-show=\"isLoaded\">Getting tokens...</span>\n" +
     "  </button>\n" +

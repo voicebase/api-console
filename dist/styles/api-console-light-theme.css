@@ -4268,13 +4268,13 @@ span.raml-console-side-bar-required-field {
   position: relative;
 }
 
-.raml-console-vbs-tokens-container .raml-console-get-tokens {
+.raml-console-vbs-tokens-container .raml-console-vbs-get-tokens {
   width: auto;
   padding: 5px;
 }
 
-.raml-console-token-auth-form,
-.raml-console-tokens-error {
+.raml-console-vbs-token-auth-form,
+.raml-console-vbs-tokens-error {
   float: right;
   background: #FFF;
   z-index: 10;
@@ -4286,34 +4286,34 @@ span.raml-console-side-bar-required-field {
   box-shadow: 0 0 5px #CCC;
 }
 
-.raml-console-token-auth-form .raml-console-auth-form-btns,
-.raml-console-tokens-error .raml-console-auth-form-btns {
+.raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns,
+.raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns {
   margin-top: -15px;
   padding: 0 16px 16px;
   display: table;
   width: 100%;
 }
 
-.raml-console-token-auth-form .raml-console-auth-form-btns .raml-console-sidebar-action-get,
-.raml-console-tokens-error .raml-console-auth-form-btns .raml-console-sidebar-action-get {
+.raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-get,
+.raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-get {
   width: 49%;
   float: left;
 }
 
-.raml-console-token-auth-form .raml-console-auth-form-btns .raml-console-sidebar-action-reset,
-.raml-console-tokens-error .raml-console-auth-form-btns .raml-console-sidebar-action-reset {
+.raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset,
+.raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset {
   width: 49%;
   float: right;
 }
 
-.raml-console-tokens-error {
+.raml-console-vbs-tokens-error {
   padding: 15px;
   color: #a94442;
   background-color: #f2dede;
   border-color: #ebccd1;
 }
 
-.raml-console-tokens-error .raml-console-close {
+.raml-console-vbs-tokens-error .raml-console-vbs-close {
   position: absolute;
   top: 5px;
   right: 10px;
@@ -4323,7 +4323,7 @@ span.raml-console-side-bar-required-field {
   font-weight: bold;
 }
 
-.raml-console-tokens-error .raml-console-close:hover {
+.raml-console-vbs-tokens-error .raml-console-vbs-close:hover {
   opacity: 1;
 }
 
@@ -4333,18 +4333,18 @@ span.raml-console-side-bar-required-field {
   left: 0;
 }
 
-.raml-console-vbs-sign-container .raml-console-token-auth-form,
-.raml-console-vbs-sign-container .raml-console-tokens-error {
+.raml-console-vbs-sign-container .raml-console-vbs-token-auth-form,
+.raml-console-vbs-sign-container .raml-console-vbs-tokens-error {
   left: 5px;
 }
 
-.raml-console-sidebar-input-file {
+.raml-console-vbs-sidebar-input-file {
   margin-top: 5px;
   margin-bottom: 18px;
   width: 100%;
 }
 
-.raml-console-param-type {
+.raml-console-vbs-param-type {
   font-weight: normal;
 }
 
