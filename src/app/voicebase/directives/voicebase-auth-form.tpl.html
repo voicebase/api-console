@@ -1,5 +1,5 @@
 <div class="raml-console-auth-form-container">
-  <div class="raml-console-token-auth-form" ng-show="showAuthForm">
+  <div class="raml-console-vbs-token-auth-form" ng-show="showAuthForm">
     <ng-form name="authForm" novalidate null-form>
       <div class="raml-console-sidebar-row">
         <p class="raml-console-sidebar-input-container">
@@ -15,15 +15,15 @@
         </p>
       </div>
 
-      <div class="raml-console-auth-form-btns">
+      <div class="raml-console-vbs-auth-form-btns">
         <button type="button" ng-click="startAuth($event)" class="raml-console-sidebar-action raml-console-sidebar-action-get">Sign In</button>
         <button type="button" ng-click="hideForm()" class="raml-console-sidebar-action raml-console-sidebar-action-reset">Cancel</button>
       </div>
     </ng-form>
   </div>
 
-  <div class="raml-console-tokens-error" ng-show="formError">
-    <span class="raml-console-close" ng-click="hideError()"><span>x</span></span>
+  <div class="raml-console-vbs-tokens-error" ng-show="formError">
+    <span class="raml-console-vbs-close" ng-click="hideError()"><span>x</span></span>
     {{ formError }}
   </div>
 

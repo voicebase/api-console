@@ -1,14 +1,14 @@
 .vbs-tokens-container {
   position: relative;
 
-  .get-tokens {
+  .vbs-get-tokens {
     width: auto;
     padding: 5px;
   }
 
 }
 
-.token-auth-form, .tokens-error {
+.vbs-token-auth-form, .vbs-tokens-error {
   float: right;
   background: #FFF;
   z-index: 10;
@@ -19,7 +19,7 @@
   border: 1px solid #CCC;
   box-shadow: 0 0 5px #CCC;
 
-  .auth-form-btns {
+  .vbs-auth-form-btns {
     margin-top: -15px;
     padding: 0 16px 16px;
     display: table;
@@ -37,13 +37,13 @@
   }
 }
 
-.tokens-error {
+.vbs-tokens-error {
   padding: 15px;
   color: #a94442;
   background-color: #f2dede;
   border-color: #ebccd1;
 
-  .close {
+  .vbs-close {
     position: absolute;
     top: 5px;
     right: 10px;
@@ -63,17 +63,17 @@
   top: 0;
   left: 0;
 
-  .token-auth-form, .tokens-error {
+  .vbs-token-auth-form, .vbs-tokens-error {
     left: 5px;
   }
 }
 
-.sidebar-input-file {
+.vbs-sidebar-input-file {
   margin-top: 5px;
   margin-bottom: 18px;
   width: 100%;
 }
 
-.param-type {
+.vbs-param-type {
   font-weight: normal;
 }
