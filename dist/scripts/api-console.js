@@ -1931,6 +1931,36 @@
 RAML.Decorators = (function (Decorators) {
   'use strict';
 
+  Decorators.AuthStrategies = function () {
+    RAML.Client.AuthStrategies.for = function(scheme, credentials) {
+      if (!scheme) {
+        return RAML.Client.AuthStrategies.anonymous();
+      }
+
+      switch(scheme.type) {
+        case 'Basic Authentication':
+          return new RAML.Client.AuthStrategies.Basic(scheme, credentials);
+        case 'OAuth 2.0':
+          return new RAML.Client.AuthStrategies.Oauth2(scheme, credentials);
+        case 'OAuth 1.0':
+          return new RAML.Client.AuthStrategies.Oauth1(scheme, credentials);
+        case 'x-custom':
+          return RAML.Client.AuthStrategies.anonymous();
+        case 'Anonymous':
+          return RAML.Client.AuthStrategies.anonymous();
+        default:
+          return RAML.Client.AuthStrategies.anonymous();
+      }
+    };
+  };
+
+  return Decorators;
+
+})(RAML.Decorators || {});
+
+RAML.Decorators = (function (Decorators) {
+  'use strict';
+
   Decorators.ramlConsole = function ($provide) {
     $provide.decorator('ramlConsoleDirective', function ($delegate, $controller, $timeout, $compile) {
       var directive = $delegate[0];
@@ -2148,7 +2178,7 @@ RAML.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'voicebase/directives/voicebase-auth-form.tpl.html',
       controller: function($scope, formValidate) {
-        $scope.credentials = {username: '33586649-D8D5-43BC-98FA-31A60B11EF72', password: '2eDdjBqtZu3rbp'};
+        $scope.credentials = {};
         $scope.showAuthForm = false;
         $scope.formError = '';
 
@@ -2477,6 +2507,9 @@ RAML.Decorators = (function (Decorators) {
     RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlField($provide);
     RAML.Decorators.ramlSidebar($provide);
+
+    // for support custom scheme x-OAuth 2 Bearer
+    RAML.Decorators.AuthStrategies();
 
     // debug
     RAML.Decorators.ramlInitializer($provide);
