@@ -14,6 +14,9 @@
     RAML.Decorators.ramlField($provide);
     RAML.Decorators.ramlSidebar($provide);
 
+    // for support custom scheme x-OAuth 2 Bearer
+    RAML.Decorators.AuthStrategies();
+
     // debug
     RAML.Decorators.ramlInitializer($provide);
 
