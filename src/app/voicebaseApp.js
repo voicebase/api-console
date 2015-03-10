@@ -13,6 +13,10 @@
     RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlField($provide);
     RAML.Decorators.ramlSidebar($provide);
+
+    // debug
+    RAML.Decorators.ramlInitializer($provide);
+
   });
 
 
