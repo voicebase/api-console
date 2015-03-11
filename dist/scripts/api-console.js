@@ -2003,7 +2003,22 @@ RAML.Decorators = (function (Decorators) {
         var bodyContent = $scope.$parent.context.bodyContent;
         var context = $scope.$parent.context[$scope.$parent.type];
         if (bodyContent) {
-          context = context || bodyContent.definitions[bodyContent.selected];
+          var definitions = bodyContent.definitions[bodyContent.selected];
+          context = context || definitions;
+
+          // remove example values for input with type=file
+          for (var key in definitions.plain) {
+            if(definitions.plain[key].selected === 'file') {
+              for (var i = 0; i < definitions.plain[key].definitions.length; i++) {
+                var definition = definitions.plain[key].definitions[i];
+                if(definition.type === 'file' && typeof definition.example !== 'undefined') {
+                  definition.example = '';
+                  definitions.values[key] = [];
+                }
+              }
+            }
+          }
+
         }
 
         $scope.parameter = context.plain[$scope.param.id];
@@ -2152,8 +2167,9 @@ RAML.Decorators = (function (Decorators) {
       require: 'ngModel',
       link: function (scope, el, attrs, ngModel) {
         el.bind('change', function () {
+          var inputValue = el.val(); //.replace(/.+[\\\/]/, '');
           scope.$apply(function () {
-            ngModel.$setViewValue(el.val());
+            ngModel.$setViewValue(inputValue);
             ngModel.$render();
           });
 
@@ -6443,7 +6459,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    Sign Out\n" +
     "  </a>\n" +
     "\n" +
-    "  <voicebase-auth-form auth=\"auth\" context=\"context\"></voicebase-auth-form>\n" +
+    "  <voicebase-auth-form></voicebase-auth-form>\n" +
     "</div>\n"
   );
 
@@ -6465,7 +6481,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    </select>\n" +
     "  </div>\n" +
     "\n" +
-    "  <voicebase-auth-form auth=\"auth\" context=\"context\"></voicebase-auth-form>\n" +
+    "  <voicebase-auth-form></voicebase-auth-form>\n" +
     "</div>\n"
   );
 
