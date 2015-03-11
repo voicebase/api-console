@@ -14,7 +14,22 @@ RAML.Decorators = (function (Decorators) {
         var bodyContent = $scope.$parent.context.bodyContent;
         var context = $scope.$parent.context[$scope.$parent.type];
         if (bodyContent) {
-          context = context || bodyContent.definitions[bodyContent.selected];
+          var definitions = bodyContent.definitions[bodyContent.selected];
+          context = context || definitions;
+
+          // remove example values for input with type=file
+          for (var key in definitions.plain) {
+            if(definitions.plain[key].selected === 'file') {
+              for (var i = 0; i < definitions.plain[key].definitions.length; i++) {
+                var definition = definitions.plain[key].definitions[i];
+                if(definition.type === 'file' && typeof definition.example !== 'undefined') {
+                  definition.example = '';
+                  definitions.values[key] = [];
+                }
+              }
+            }
+          }
+
         }
 
         $scope.parameter = context.plain[$scope.param.id];

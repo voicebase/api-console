@@ -6,8 +6,9 @@
       require: 'ngModel',
       link: function (scope, el, attrs, ngModel) {
         el.bind('change', function () {
+          var inputValue = el.val(); //.replace(/.+[\\\/]/, '');
           scope.$apply(function () {
-            ngModel.$setViewValue(el.val());
+            ngModel.$setViewValue(inputValue);
             ngModel.$render();
           });
 
