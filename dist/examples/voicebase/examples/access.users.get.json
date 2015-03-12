@@ -1,0 +1,20 @@
+{ 
+  "_links" : {
+    "self" : { "href" : "/v2-beta/access/users/" },
+    "items" : { "href" : "/v2-beta/access/users/{userId}/" }
+  },
+  "users" : [
+    {
+      "name" : "admin",
+      "admin" : true,
+      "userId" : "1836cea2-55bb-495b-ac17-cf2a7cf8943e",
+      "email" : "jane.doe@example.org",
+      
+    },
+    {
+      "name" : "john",
+      "userId" : "174e1e74-5a3d-429d-b24f-a60bffd603c6",
+      "email" : "john.doe@example.org"
+    }
+  ]
+}

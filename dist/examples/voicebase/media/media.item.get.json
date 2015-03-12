@@ -1,0 +1,111 @@
+{
+  "_links" : {  
+    "self" : { "href" : "/v2-beta/media/3c7499c2-aebd-4efc-aaf7-0ad4636cc160/" }
+  },
+  "media" : {
+    "mediaId" : "3c7499c2-aebd-4efc-aaf7-0ad4636cc160",
+    "status" : "finished",
+    "metadata" : {
+      "latest" : {
+        "title" : "Best Scene Ever",
+        "speakers" : [ "Arthur Dent", "Ford Prefect" ],
+        "external" : {
+          "id" : "abcd1234",
+          "name" : "Something or other"
+        },
+        "extended" : {
+          "location" : "Magrathea",
+          "region-of-the-country" : "Northern",
+          "sales-followup" : 0.025,
+          "sales-ignore" : 0.85
+        },
+        "positional" : {
+          "18.5" : { 
+            "event" : "whale collision",
+            "inquiry" : "I wonder if it will be friends with me?"
+          }
+        }
+      }
+    },
+    "configuration" : {
+      "template" : {
+        "name" : "default",
+        "revision" : "2d1611db-4016-4137-a809-a1d91fd95855"
+      }
+    },
+    "transcripts" : {
+      "latest" : {
+        "transcriptId" : "e0589bc2-5266-4c52-8347-42c2c186fe16",
+        "type" : "machine",
+        "engine" : "premium",
+        "features" : [ "speakerTurns", "speakerId" ],
+        "formats" : [ "json", "srt" ],
+        "words" : [
+          { "p" : 1, "c" : 0.927, "s" : 10, "e" : 1390, "w" : "him" }
+        ]
+      }
+    },
+    "keywords" : {
+      "latest" : {
+        "revision" : "ba3296f7-9d73-4774-b224-40fcdcd874a2",
+        "words" : [
+          { 
+            "mobile advertising" : [ 
+              { "p" : 157, "s" : 1496.3, "e" : 1497.1 },
+              { "p" : 211, "s" : 1601.1, "e" : 1602.6 },
+              { "p" : 247, "s" : 1784.0, "e" : 1785.3 }
+            ]
+          },
+          {
+            "mobile usage" : [
+              { "p" : 164, "s" : 1525.6, "e" : 1527.1 },
+              { "p" : 203, "s" : 1589.9, "e" : 1591.2 },
+              { "p" : 290, "s" : 1984.0, "e" : 1985.4 }
+            ]
+          }
+        ]
+      }
+    },
+    "topics" : {
+      "latest" : {
+        "revision" : "cc7bd8d1-bb76-47c9-bf52-54acd43aea57",
+        "terms" : [
+          { 
+            "name" : "mobile industry",
+            "id" : "6f71daf4-4f97-45c6-a29f-5726cbdba270"
+            "spotting" : false,
+            "keywords" : [ 
+              "mobile advertising",
+              "mobile usage"
+            ]
+          },
+          {
+            "name" : "mobile-phone",
+            "spotting" : true,
+            "keywords" : [
+              "iPhone"
+            ]
+          }
+        ]
+      }
+    },
+    "utterances" : {
+      "name" : "latest",
+      "revision" : "e0deb839-4305-4465-af10-41446754f630",
+      "pci" : [
+        { "p" : 1, "c" : 0.944, "s" : 1630.25, "e" : 1639.01, "w" : "4111111111111111" }
+      ]
+    },
+    "predictions" : {
+      "latest" : {
+        "revision" : "221ed6d3-b6bb-46d3-99f5-b0330818d416",
+        "sales-lead" : {
+          "probability" : 0.025
+        },
+        "not-a-sales-lead" : {
+          "probability" : 0.85
+        }
+      }
+    }
+  }
+}

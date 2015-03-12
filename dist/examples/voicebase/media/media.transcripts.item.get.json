@@ -1,0 +1,17 @@
+{
+  "_links" : {
+    "self" : { "href" : "/media/{mediaId}/transcripts/latest" },
+    "revision" : { "href" : "/media/{mediaId}/transcripts/e0589bc2-5266-4c52-8347-42c2c186fe16" }
+  },
+  "transcript" : {
+    "name" : "latest",
+    "revision" : "e0589bc2-5266-4c52-8347-42c2c186fe16",
+    "type" : "machine",
+    "engine" : "premium",
+    "features" : [ "speakerTurns", "speakerId" ],
+    "formats" : [ "json", "srt" ],
+    "words" : [
+      { "p" : 1, "c" : 0.927, "s" : 10, "e" : 1390, "w" : "him" }
+    ]
+  }
+}

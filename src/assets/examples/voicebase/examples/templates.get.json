@@ -1,0 +1,22 @@
+{
+  "_links" : { 
+    "self" : { "href" : "/v2-beta/templates/" },
+    "items" : { "href" : "/v2-beta/templates/{templateId}" }
+  },
+  "templates" : {
+    "default" : {
+      "default" : true,
+      "revision" : "8903e85c-ad72-4314-94d7-78be144105fb",
+      "created" : "2015-01-05T23:47:13Z",
+      "revisions" : [
+        { "983e5a8b-c20b-47f5-9d71-10edeaae8317" : "2015-01-05T23:11:16Z" },
+        { "64ff5c82-5be9-4d4d-84fd-d1bd8a8971f5" : "2015-01-05T23:08:13Z" }
+      ]
+    },
+    "priority" : {
+      "name" : "priority",
+      "revision" : "d18d3219-5aa0-4b32-ac6a-a5fccd3be59d",
+      "created" : "2015-01-08T01:50:11Z",
+    }
+  }
+}

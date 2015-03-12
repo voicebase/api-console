@@ -1,0 +1,29 @@
+
+  post: 
+    description: |
+        Upload new new media to the service as an attachment or from a url.
+    body:            
+      multipart/form-data: 
+        formParameters:
+          configuration:
+            description: |
+              A JSON object with configuration options.
+              @ /v2/templates/
+            required: false
+            type: file
+            example: !include media/media.post.configuration.json
+              
+          metadata:
+            description: Metadata about the file being posted.
+            required: false
+            type: file
+            example: !include media/media.post.metadata.json
+          transcript:
+            description: attached transcript
+            required: false
+            type: file
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include media/media.post.json

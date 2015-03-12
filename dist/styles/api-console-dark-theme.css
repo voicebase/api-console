@@ -4323,6 +4323,90 @@ span.raml-console-side-bar-required-field {
   margin-left: 72px;
 }
 
+.raml-console-vbs-tokens-container {
+  position: relative;
+}
+
+.raml-console-vbs-tokens-container .raml-console-vbs-get-tokens {
+  width: auto;
+  padding: 5px;
+}
+
+.raml-console-vbs-token-auth-form,
+.raml-console-vbs-tokens-error {
+  float: right;
+  background: #FFF;
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  width: 400px;
+  border: 1px solid #CCC;
+  box-shadow: 0 0 5px #CCC;
+}
+
+.raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns,
+.raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns {
+  margin-top: -15px;
+  padding: 0 16px 16px;
+  display: table;
+  width: 100%;
+}
+
+.raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-get,
+.raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-get {
+  width: 49%;
+  float: left;
+}
+
+.raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset,
+.raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset {
+  width: 49%;
+  float: right;
+}
+
+.raml-console-vbs-tokens-error {
+  padding: 15px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.raml-console-vbs-tokens-error .raml-console-vbs-close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.5;
+  font-weight: bold;
+}
+
+.raml-console-vbs-tokens-error .raml-console-vbs-close:hover {
+  opacity: 1;
+}
+
+.raml-console-vbs-sign-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.raml-console-vbs-sign-container .raml-console-vbs-token-auth-form,
+.raml-console-vbs-sign-container .raml-console-vbs-tokens-error {
+  left: 5px;
+}
+
+.raml-console-vbs-sidebar-input-file {
+  margin-top: 5px;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.raml-console-vbs-param-type {
+  font-weight: normal;
+}
+
 /*
 
 Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>

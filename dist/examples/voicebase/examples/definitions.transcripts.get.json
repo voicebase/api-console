@@ -1,0 +1,8 @@
+{ 
+  "_links" : {
+    "self" : { "href" : "/v2-beta/definitions/transcripts/" },
+    "collections" : [
+      { "href" : "/v2-beta/definitions/transcripts/vocabularies/", "Definitions of transcription vocabularies" }
+    ]
+  }
+}

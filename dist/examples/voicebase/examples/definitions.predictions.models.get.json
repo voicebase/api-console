@@ -1,0 +1,90 @@
+{
+  "_links" : {
+    "self" : { "href" : "/v2-beta/definitions/predictions/models/" },
+    "items" : { "href" : "/v2-beta/definitions/predictions/models/{modelId}" }
+  },
+  "models" : [
+    {
+      "name" : "sales-lead",
+      "revision" : "dc6256f1-9871-441b-9ab1-2167600e5d9e",
+      "outcome" : { 
+        "type" : "probability"
+      },
+      "training" : {
+        "media" : {
+          "f1cdae9b-36ab-4c78-a3ba-d4437109c633" : {
+            "sales-lead" : 0.0
+          },
+          "81144267-0aae-46d6-854b-f342dd030910" : {
+            "sales-lead" : 0.0
+          },
+          "cabab530-73f1-4f0b-a3ea-36c4e3d25fa4" : {
+            "sales-lead" : 0.0
+          },
+          "11bd5a3b-344b-4bd7-9272-fd634304c743" : {
+            "sales-lead" : 0.0
+          },
+          "58f0c032-8067-4dce-ab6e-88db39d3e980" : {
+            "sales-lead" : 0.0
+          },
+          "3ec121a8-f89b-496b-932b-8f1e33c34e9c" : {
+            "sales-lead" : 1.0
+          },
+          "a940898b-d895-4edc-90af-b457b1bbaac8" : {
+            "sales-lead" : 1.0
+          },
+          "7c587b94-e0cf-4bf6-b0f4-804ee60d823d" : {
+            "sales-lead" : 1.0
+          },
+          "c3338d81-10f7-461e-b8b9-169810e6c27a" : {
+            "sales-lead" : 1.0
+          },
+          "833323a4-fd18-4f28-8da6-d17931a5ef13" : {
+            "sales-lead" : 1.0
+          }
+        }
+      }
+    },
+    {
+      "name" : "not-a-sales-lead",
+      "revision" : "0dd5cc86-f5e2-45f9-9301-820f9036c37d",
+      "outcome" : { 
+        "type" : "probability"
+      },
+      "training" : {
+        "media" : {
+          "f1cdae9b-36ab-4c78-a3ba-d4437109c633" : {
+            "not-a-sales-lead" : 1.0
+          },
+          "81144267-0aae-46d6-854b-f342dd030910" : {
+            "not-a-sales-lead" : 1.0
+          },
+          "cabab530-73f1-4f0b-a3ea-36c4e3d25fa4" : {
+            "not-a-sales-lead" : 1.0
+          },
+          "11bd5a3b-344b-4bd7-9272-fd634304c743" : {
+            "not-a-sales-lead" : 1.0
+          },
+          "58f0c032-8067-4dce-ab6e-88db39d3e980" : {
+            "not-a-sales-lead" : 1.0
+          },
+          "3ec121a8-f89b-496b-932b-8f1e33c34e9c" : {
+            "not-a-sales-lead" : 0.0
+          },
+          "a940898b-d895-4edc-90af-b457b1bbaac8" : {
+            "not-a-sales-lead" : 0.0
+          },
+          "7c587b94-e0cf-4bf6-b0f4-804ee60d823d" : {
+            "not-a-sales-lead" : 0.0
+          },
+          "c3338d81-10f7-461e-b8b9-169810e6c27a" : {
+            "not-a-sales-lead" : 0.0
+          },
+          "833323a4-fd18-4f28-8da6-d17931a5ef13" : {
+            "not-a-sales-lead" : 0.0
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+# /definitions:
+  # /transcripts:
+    # /vocabularies:
+      displayName: Custom vocabularies
+      description: Define custom vocabularies for more accurate transcription.
+      get:
+        description: Get all defined custom vocabularies.
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ../examples/definitions.transcripts.vocabularies.get.json
+      
+      /{vocabularyId}:
+        displayName: Named custom vocabulary.
+        description: A custom vocabulary based on a set of documents or recordings.
+        get:
+          description: Get the custom vocabulary.
+          body:
+            application/json:
+              example: !include ../examples/definitions.transcripts.vocabularies.item.get.json
+        put:
+          description: Create a custom vocabulary from a set of media.
+          body:
+            application/json:
+              example: !include ../examples/definitions.transcripts.vocabularies.item.put.request.json
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include ../examples/definitions.transcripts.vocabularies.item.get.json
+        delete:
+          description: Delete this custom vocabulary.
+          responses:
+            204:

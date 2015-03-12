@@ -1,0 +1,17 @@
+{
+  "_links" : {
+    "self" : { "href" : "/v2-beta/media/{mediaId}/predictions/" },
+    "items" : { "href" : "/v2-beta/media/{mediaId}/predictions/{predictionsId}" },
+  },
+  "predictions" : {
+    "latest" : {
+      "revision" : "221ed6d3-b6bb-46d3-99f5-b0330818d416",
+      "sales-lead" : {
+        "probability" : 0.025
+      },
+      "not-a-sales-lead" : {
+        "probability" : 0.85
+      }
+    }
+  }
+}
