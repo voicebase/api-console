@@ -30,7 +30,9 @@
           }
           else {
             $scope.hideForm();
-            $scope.auth($scope.credentials);
+            $scope.auth($scope.credentials, function(_formError) {
+                $scope.formError = _formError;
+            });
           }
 
         };
