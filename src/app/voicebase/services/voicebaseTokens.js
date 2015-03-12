@@ -27,8 +27,13 @@
           'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
         success: function(_tokens) {
-          setTokensObj(_tokens);
-          deferred.resolve(_tokens);
+          if(!_tokens.tokens.length) {
+            deferred.reject('There are no tokens!');
+          }
+          else {
+            setTokensObj(_tokens);
+            deferred.resolve(_tokens);
+          }
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);

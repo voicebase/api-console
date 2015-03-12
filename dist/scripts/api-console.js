@@ -2261,14 +2261,16 @@ RAML.Decorators = (function (Decorators) {
             voicebaseTokensApi.setTokensObj(null);
         };
 
-        $scope.auth = function(credentials) {
+        $scope.auth = function(credentials, errorCallback) {
           $scope.isLoaded = true;
           var client = RAML.Client.create($scope.raml);
           voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
             $scope.isLoaded = false;
           }, function(error){
             $scope.isLoaded = false;
-            $scope.formError = error;
+            if(errorCallback) {
+              errorCallback(error);
+            }
           });
         };
 
@@ -2302,13 +2304,15 @@ RAML.Decorators = (function (Decorators) {
         $scope.tokens = [];
         $scope.selectedToken = null;
 
-        $scope.auth = function(credentials) {
+        $scope.auth = function(credentials, errorCallback) {
           $scope.isLoaded = true;
           var client = RAML.Client.create($scope.raml);
           voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
           }, function(error){
             $scope.isLoaded = false;
-            $scope.formError = error;
+            if(errorCallback) {
+              errorCallback(error);
+            }
           });
         };
 
@@ -2440,8 +2444,13 @@ RAML.Decorators = (function (Decorators) {
           'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
         success: function(_tokens) {
-          setTokensObj(_tokens);
-          deferred.resolve(_tokens);
+          if(!_tokens.tokens.length) {
+            deferred.reject('There are no tokens!');
+          }
+          else {
+            setTokensObj(_tokens);
+            deferred.resolve(_tokens);
+          }
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);
