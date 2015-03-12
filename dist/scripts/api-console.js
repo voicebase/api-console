@@ -2167,7 +2167,8 @@ RAML.Decorators = (function (Decorators) {
       require: 'ngModel',
       link: function (scope, el, attrs, ngModel) {
         el.bind('change', function () {
-          var inputValue = el.val(); //.replace(/.+[\\\/]/, '');
+          var element = el.get(0);
+          var inputValue = (element.files.length > 0) ? element.files[0] : '';
           scope.$apply(function () {
             ngModel.$setViewValue(inputValue);
             ngModel.$render();
