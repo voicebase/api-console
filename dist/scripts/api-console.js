@@ -355,6 +355,26 @@
 (function () {
   'use strict';
 
+  RAML.Directives.editorStyles = function() {
+    return {
+      restrict: 'A',
+      scope: {
+        editorStyles: '='
+      },
+      link: function link(scope, element) {
+        var styles = scope.editorStyles;
+        element.css(styles);
+      }
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('editorStyles', RAML.Directives.editorStyles);
+})();
+
+(function () {
+  'use strict';
+
   RAML.Directives.methodList = function() {
     return {
       restrict: 'E',
@@ -6298,7 +6318,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "                <div ng-if=\"response.body\">\n" +
     "                  <h3 class=\"raml-console-sidebar-response-head raml-console-sidebar-response-head-pre\">Body</h3>\n" +
     "                  <div class=\"raml-console-sidebar-pre\">\n" +
-    "                    <div ui-codemirror=\"{ readOnly: true, tabSize: 2, lineNumbers: true, theme : 'raml-console', mode: response.contentType }\" ng-model=\"response.body\" ng-style=\"editorStyle\">\n" +
+    "                    <div ui-codemirror=\"{ readOnly: true, tabSize: 2, lineNumbers: true, theme : 'raml-console', mode: response.contentType }\" ng-model=\"response.body\" class=\"raml-console-code-editor\" editor-styles=\"editorStyle\">\n" +
     "                    </div>\n" +
     "                  </div>\n" +
     "                </div>\n" +
