@@ -6318,7 +6318,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "                <div ng-if=\"response.body\">\n" +
     "                  <h3 class=\"raml-console-sidebar-response-head raml-console-sidebar-response-head-pre\">Body</h3>\n" +
     "                  <div class=\"raml-console-sidebar-pre\">\n" +
-    "                    <div ui-codemirror=\"{ readOnly: true, tabSize: 2, lineNumbers: true, theme : 'raml-console', mode: response.contentType }\" ng-model=\"response.body\" class=\"raml-console-code-editor\" editor-styles=\"editorStyle\">\n" +
+    "                    <div ui-codemirror=\"{ readOnly: true, tabSize: 2, lineNumbers: true, theme : 'raml-console', mode: response.contentType }\" ng-model=\"response.body\" editor-styles=\"editorStyle\">\n" +
     "                    </div>\n" +
     "                  </div>\n" +
     "                </div>\n" +
