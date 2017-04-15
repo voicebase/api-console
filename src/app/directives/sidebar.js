@@ -6,7 +6,7 @@
       restrict: 'E',
       templateUrl: 'directives/sidebar.tpl.html',
       replace: true,
-      controller: function ($scope, $location, $anchorScroll) {
+      controller: function ($scope, $location, $anchorScroll, $timeout) {
         var defaultSchemaKey = Object.keys($scope.securitySchemes).sort()[0];
         var defaultSchema    = $scope.securitySchemes[defaultSchemaKey];
 
@@ -115,6 +115,11 @@
           };
 
           apply();
+
+          $scope.refreshCodemirror = true;
+          $timeout(function () {
+            $scope.refreshCodemirror = false;
+          }, 100);
         }
 
         function resolveSegementContexts(pathSegments, uriParameters) {
