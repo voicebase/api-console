@@ -116,9 +116,13 @@
 
           apply();
 
-          $scope.refreshCodemirror = true;
+          if (!$scope.refreshCodemirror) {
+            $scope.refreshCodemirror = 1;
+          } else {
+            $scope.refreshCodemirror++;
+          }
           $timeout(function () {
-            $scope.refreshCodemirror = false;
+            $scope.refreshCodemirror++;
           }, 100);
         }
 
