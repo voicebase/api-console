@@ -8,7 +8,6 @@
       replace: true,
       controller: function($scope, $location, $anchorScroll, $rootScope) {
         $scope.showPanel = false;
-        console.log('false in scope:', $scope.$id);
         function loadExamples () {
           $scope.context.uriParameters.reset($scope.resource.uriParametersForDocumentation);
           $scope.context.queryParameters.reset($scope.methodInfo.queryParameters);
